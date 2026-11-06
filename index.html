@@ -58,34 +58,8 @@
   .app-title { margin: 0; font-size: 24px; font-weight: 800; letter-spacing: .2px; }
   .school-name { margin: 3px 0 0; font-size: 13px; opacity: .88; font-weight: 500; }
 
-  /* ===== NAV (desktop) ===== */
-  .app-nav {
-    display: flex;
-    flex-wrap: wrap;
-    background: #fff;
-    border-bottom: 1px solid var(--border);
-    padding: 0 20px;
-    box-shadow: var(--shadow-sm);
-    position: sticky;
-    top: 0;
-    z-index: 4;
-  }
-  .nav-btn {
-    background: none;
-    border: none;
-    padding: 15px 18px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    color: var(--teks-lembut);
-    border-bottom: 3px solid transparent;
-    transition: color .15s ease, background .15s ease;
-  }
-  .nav-btn:hover { background: var(--hijau-muda); color: var(--hijau-tua); }
-  .nav-btn.active { color: var(--hijau-tua); font-weight: 700; border-bottom-color: var(--emas); }
-
   /* ===== CONTENT ===== */
-  .app-content { padding: 26px; min-height: 60vh; max-width: 1200px; margin: 0 auto; }
+  .app-content { padding: 26px 28px 32px; min-height: 60vh; width: 100%; max-width: 1400px; margin: 0 auto; }
   .page { display: none; animation: fadeIn .25s ease; }
   .page.active { display: block; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(6px);} to { opacity: 1; transform: translateY(0);} }
@@ -109,11 +83,11 @@
   .stat-label { font-size: 12px; color: var(--teks-lembut); margin-top: 2px; }
 
   /* ===== TABLE ===== */
-  .table-wrap { width: 100%; overflow-x: auto; border-radius: var(--radius); box-shadow: var(--shadow-sm); background: var(--putih); }
-  .data-table { width: 100%; border-collapse: collapse; background: var(--putih); min-width: 560px; }
-  .data-table th, .data-table td { padding: 12px 14px; border-bottom: 1px solid var(--border); font-size: 13px; text-align: left; white-space: nowrap; }
-  .data-table td:nth-child(2), .data-table th:nth-child(2) { white-space: normal; }
-  .data-table th { background: var(--hijau-tua); color: #fff; font-weight: 600; position: sticky; top: 0; }
+  .table-wrap { width: 100%; overflow-x: auto; border-radius: var(--radius); box-shadow: var(--shadow-sm); background: var(--putih); border: 1px solid var(--border); }
+  .data-table { width: 100%; border-collapse: collapse; background: var(--putih); }
+  .data-table th, .data-table td { padding: 12px 12px; border-bottom: 1px solid var(--border); font-size: 13px; text-align: left; vertical-align: middle; overflow-wrap: anywhere; line-height: 1.45; }
+  .data-table th { background: var(--hijau-tua); color: #fff; font-weight: 600; }
+  .data-table tbody tr:last-child td { border-bottom: none; }
   .data-table tr:hover td { background: var(--hijau-muda); }
   .badge { padding: 3px 8px; border-radius: 12px; font-size: 11px; color: #fff; background: var(--hijau); }
   .link-btn { color: var(--hijau-tua); text-decoration: underline; cursor: pointer; font-weight: 600; }
@@ -294,7 +268,6 @@
   .more-item .icon { font-size: 18px; }
 
   @media (max-width: 860px) {
-    .app-nav { display: none; }
     .app-content { padding: 18px 14px 90px; }
     .bottom-nav { display: block; }
   }
@@ -306,9 +279,193 @@
     .landing-hero h2 { font-size: 23px; }
     .public-form-card { padding: 22px 16px; }
   }
+
+  /* =====================================================
+     PORTAL ADMIN: SIDEBAR + TOPBAR
+     ===================================================== */
+  .ico { width: 20px; height: 20px; flex: 0 0 auto; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; display: block; }
+
+  .shell { display: flex; min-height: 100vh; }
+  .main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  .main .app-footer { margin-top: auto; }
+
+  .sidebar {
+    position: sticky; top: 0; align-self: flex-start;
+    width: 276px; flex: 0 0 276px; height: 100vh;
+    display: flex; flex-direction: column;
+    padding: 20px 14px 14px;
+    color: #fff;
+    background:
+      radial-gradient(120% 60% at 0% 0%, rgba(232,199,102,.14), transparent 55%),
+      radial-gradient(90% 50% at 100% 100%, rgba(31,160,106,.28), transparent 60%),
+      linear-gradient(185deg, #0e4733 0%, #0a3527 55%, #072a1f 100%);
+    box-shadow: 6px 0 28px rgba(7,42,31,.18);
+    transition: width .22s ease, flex-basis .22s ease;
+    z-index: 30;
+  }
+  .sidebar::after {
+    content: ''; position: absolute; inset: 0; pointer-events: none; opacity: .07;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cpath d='M30 4l6 14 14-6-6 14 14 6-14 6 6 14-14-6-6 14-6-14-14 6 6-14-14-6 14-6-6-14 14 6z' fill='none' stroke='%23ffffff' stroke-width='1'/%3E%3C/svg%3E");
+    background-size: 60px 60px;
+  }
+  .sidebar > * { position: relative; z-index: 1; }
+
+  .sb-brand { display: flex; align-items: center; gap: 12px; padding: 4px 8px 18px; border-bottom: 1px solid rgba(255,255,255,.12); margin-bottom: 10px; min-height: 66px; }
+  .sb-logo { width: 46px; height: 46px; flex: 0 0 46px; object-fit: contain; background: #fff; border-radius: 13px; padding: 5px; box-shadow: 0 4px 14px rgba(0,0,0,.25); }
+  .sb-brand-text { min-width: 0; }
+  .sb-title { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 15.5px; line-height: 1.2; letter-spacing: .1px; }
+  .sb-school { font-size: 11.5px; line-height: 1.35; color: rgba(255,255,255,.66); margin-top: 3px; }
+
+  .sb-nav { flex: 1; overflow-y: auto; padding: 2px 0 8px; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,.2) transparent; }
+  .sb-group { font-size: 11.5px; font-weight: 600; color: var(--emas-terang); opacity: .85; padding: 16px 12px 6px; letter-spacing: .2px; }
+
+  .side-btn {
+    position: relative; display: flex; align-items: center; gap: 12px; width: 100%;
+    padding: 11px 12px; margin: 2px 0; border: none; border-radius: 12px; cursor: pointer;
+    background: transparent; color: rgba(255,255,255,.76);
+    font: 500 14px/1.2 'Inter', 'Segoe UI', sans-serif; text-align: left;
+    transition: background .15s ease, color .15s ease;
+  }
+  .side-btn .lbl { flex: 1; min-width: 0; }
+  .side-btn:hover { background: rgba(255,255,255,.08); color: #fff; }
+  .side-btn:focus-visible, .sb-me:focus-visible, .sb-icon:focus-visible, .tb-toggle:focus-visible { outline: 2px solid var(--emas-terang); outline-offset: 2px; }
+  .side-btn.active { color: #fff; font-weight: 600; background: linear-gradient(90deg, rgba(232,199,102,.22), rgba(255,255,255,.07) 70%); }
+  .side-btn.active::before { content: ''; position: absolute; left: -14px; top: 9px; bottom: 9px; width: 4px; border-radius: 0 4px 4px 0; background: var(--emas-terang); }
+  .side-btn.active .ico { color: var(--emas-terang); }
+
+  .cnt { min-width: 24px; padding: 2px 8px; border-radius: 20px; font-size: 11.5px; font-weight: 600; text-align: center; background: rgba(255,255,255,.14); color: #fff; }
+  .cnt.cnt-baru { background: var(--emas-terang); color: #3a2c00; }
+  .cnt.zero { display: none; }
+
+  .sb-user { margin-top: 8px; padding: 10px; border-radius: 16px; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.1); display: flex; align-items: center; gap: 6px; }
+  .sb-me { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; background: none; border: none; color: #fff; cursor: pointer; padding: 2px; border-radius: 10px; text-align: left; font-family: inherit; }
+  .avatar { width: 38px; height: 38px; flex: 0 0 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font: 800 16px 'Plus Jakarta Sans', sans-serif; color: #3a2c00; background: linear-gradient(140deg, var(--emas-terang), var(--emas)); }
+  .me-text { min-width: 0; display: flex; flex-direction: column; }
+  .me-text b { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .me-text small { font-size: 11.5px; color: rgba(255,255,255,.62); }
+  .sb-actions { display: flex; gap: 2px; }
+  .sb-icon { width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border: none; border-radius: 10px; background: transparent; color: rgba(255,255,255,.78); cursor: pointer; transition: background .15s ease, color .15s ease; }
+  .sb-icon:hover { background: rgba(255,255,255,.14); color: #fff; }
+  .sb-icon.danger:hover { background: rgba(176,42,42,.9); }
+  .sb-icon:disabled { opacity: .7; cursor: wait; }
+  .sb-icon.spin .ico { animation: putar .8s linear infinite; }
+  @keyframes putar { to { transform: rotate(360deg); } }
+
+  /* sidebar diciutkan (ikon saja) */
+  .shell.collapsed .sidebar { width: 80px; flex-basis: 80px; padding-left: 10px; padding-right: 10px; }
+  .shell.collapsed .sb-brand { justify-content: center; padding-left: 0; padding-right: 0; }
+  .shell.collapsed .sb-brand-text, .shell.collapsed .side-btn .lbl, .shell.collapsed .me-text { display: none; }
+  .shell.collapsed .sb-group { font-size: 0; padding: 8px 0; }
+  .shell.collapsed .sb-group::before { content: ''; display: block; height: 1px; background: rgba(255,255,255,.14); margin: 0 10px; }
+  .shell.collapsed .side-btn { justify-content: center; padding: 12px 0; }
+  .shell.collapsed .side-btn.active::before { left: -10px; }
+  .shell.collapsed .cnt { position: absolute; top: 3px; right: 6px; min-width: 17px; padding: 0 5px; font-size: 10px; line-height: 17px; }
+  .shell.collapsed .sb-user { flex-direction: column; padding: 8px 4px; }
+  .shell.collapsed .sb-actions { flex-direction: column; }
+
+  /* topbar */
+  .topbar { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 14px; height: 62px; padding: 0 28px; background: rgba(255,255,255,.88); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
+  .tb-toggle { width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; background: #fff; border: 1px solid var(--border); border-radius: 11px; color: var(--hijau-tua); cursor: pointer; transition: background .15s ease; }
+  .tb-toggle:hover { background: var(--hijau-muda); }
+  .crumb { display: flex; align-items: center; gap: 6px; font-size: 14px; color: var(--teks-lembut); min-width: 0; }
+  .crumb b { color: var(--hijau-tua); font-weight: 700; font-family: 'Plus Jakarta Sans', sans-serif; white-space: nowrap; }
+  .crumb .sep { width: 16px; height: 16px; opacity: .55; }
+  .tb-date { margin-left: auto; font-size: 13px; color: var(--teks-lembut); white-space: nowrap; padding: 7px 14px; background: var(--hijau-muda); border-radius: 20px; }
+
+  /* kepala halaman & tombol berikon */
+  .page-head { align-items: flex-end; margin-bottom: 18px; }
+  .page-head h2 { margin: 0; font-size: 24px; }
+  .page-sub { margin: 4px 0 0; font-size: 13.5px; color: var(--teks-lembut); }
+  .head-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn-ico { display: inline-flex; align-items: center; gap: 8px; }
+  .btn-ico .ico { width: 17px; height: 17px; }
+  .btn-secondary:disabled { opacity: .5; cursor: not-allowed; background: #fff; }
+
+  /* ===== FILTER ===== */
+  .filter-bar {
+    display: flex; flex-wrap: wrap; gap: 12px 14px; align-items: flex-end;
+    background: var(--putih); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 14px 16px; box-shadow: var(--shadow-sm);
+  }
+  .f-field { display: flex; flex-direction: column; gap: 5px; min-width: 150px; }
+  .f-field.f-grow { flex: 1 1 240px; }
+  .f-field label { font-size: 12px; font-weight: 600; color: var(--teks-lembut); }
+  .f-field input, .f-field select {
+    height: 38px; padding: 0 11px; border: 1.5px solid var(--border); border-radius: 9px; font: 14px 'Inter', sans-serif; background: #fcfdfc; color: var(--teks); width: 100%;
+    transition: border-color .15s ease, box-shadow .15s ease;
+  }
+  .f-field input:focus, .f-field select:focus { outline: none; border-color: var(--hijau-terang); box-shadow: 0 0 0 3px rgba(31,160,106,.15); background: #fff; }
+  .f-search { position: relative; }
+  .f-search .ico { position: absolute; left: 11px; top: 10px; width: 18px; height: 18px; color: var(--teks-lembut); pointer-events: none; }
+  .f-search input { padding-left: 37px; }
+
+  .filter-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 10px 14px; margin: 12px 2px 12px; }
+  .chips { display: flex; gap: 6px; }
+  .chip { border: 1.5px solid var(--border); background: #fff; color: var(--teks-lembut); border-radius: 20px; padding: 5px 13px; font: 600 12.5px 'Inter', sans-serif; cursor: pointer; transition: background .15s ease, color .15s ease, border-color .15s ease; }
+  .chip:hover { border-color: var(--hijau-terang); color: var(--hijau-tua); }
+  .chip.on { background: var(--hijau-tua); border-color: var(--hijau-tua); color: #fff; }
+  .meta-text { font-size: 13px; color: var(--teks-lembut); margin-left: auto; }
+  .filter-meta .btn-link-inline { font-weight: 600; }
+
+  /* ===== TABEL DAFTAR SURAT: muat di layar desktop tanpa scroll samping ===== */
+  .tbl-fixed { table-layout: fixed; }
+  .tbl-fixed th, .tbl-fixed td { padding: 12px 10px; }
+  .tbl-fixed th:first-child, .tbl-fixed td:first-child { padding-left: 14px; }
+  .tbl-fixed td.c-no { color: var(--teks-lembut); text-align: center; padding-left: 10px; }
+  .tbl-fixed th:first-child { text-align: center; padding-left: 10px; }
+  .tbl-fixed td.c-date { white-space: nowrap; font-size: 12.5px; }
+  .tbl-fixed .btn-secondary.btn-sm, .tbl-fixed .btn-danger { padding: 6px 10px; white-space: nowrap; }
+  .data-table td.empty { text-align: center; color: #7c8a83; padding: 36px 12px; font-size: 14px; }
+  .data-table tbody tr:nth-child(even) td { background: #fafcfb; }
+  .data-table tbody tr:hover td { background: var(--hijau-muda); }
+
+  /* ===== ikon pada bottom nav & menu Lainnya ===== */
+  .bottom-nav-btn .ico { width: 22px; height: 22px; }
+  .more-item .ico { width: 19px; height: 19px; color: var(--hijau); }
+  .more-item.danger .ico { color: #b02a2a; }
+
+  /* ===== RESPONSIF ===== */
+  @media (max-width: 860px) {
+    .sidebar { display: none; }
+    .tb-toggle { display: none; }
+    .topbar { padding: 0 16px; height: 54px; }
+    .tb-date { display: none; }
+    .app-content { padding: 18px 14px 90px; }
+    .data-table { min-width: 640px; }
+    .tbl-fixed { table-layout: auto; min-width: 780px; }
+    .tbl-fixed th:first-child, .tbl-fixed td:first-child { white-space: nowrap; min-width: 44px; }
+    .tbl-fixed td.c-date { white-space: normal; }
+    .meta-text { margin-left: 0; }
+    .f-field { flex: 1 1 140px; }
+    .page-head h2 { font-size: 21px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sidebar, .sb-icon.spin .ico { transition: none; animation: none; }
+  }
+
 </style>
 </head>
 <body>
+  <!-- ===== SPRITE IKON (dipakai sidebar, tombol & filter) ===== -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></symbol>
+    <symbol id="i-inbox" viewBox="0 0 24 24"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></symbol>
+    <symbol id="i-archive" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="5" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/></symbol>
+    <symbol id="i-filetext" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8M16 17H8M10 9H8"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+    <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></symbol>
+    <symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M3 12h18M3 6h18M3 18h18"/></symbol>
+    <symbol id="i-printer" viewBox="0 0 24 24"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-rotate" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></symbol>
+    <symbol id="i-chev" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></symbol>
+  </svg>
+
 
   <!-- =======================================================
        HALAMAN LANDING / LOGIN (tampil pertama kali dibuka)
@@ -399,31 +556,56 @@
   ======================================================== -->
   <div id="adminView" class="hidden">
 
-  <!-- ===== HEADER ===== -->
-  <header class="app-header">
-    <div class="header-left">
-      <img id="logoImg" style="display:none" onerror="this.style.display='none'" alt="Logo Sekolah" class="app-logo">
-    </div>
-    <div class="header-right">
-      <h1 class="app-title js-app-title">Aplikasi Tata Usaha</h1>
-      <p class="school-name js-school-name">SMP Islam Terpadu Al Mubarok</p>
-    </div>
-  </header>
+  <div id="shell" class="shell">
 
-  <!-- ===== MENU NAVIGASI ===== -->
-  <nav class="app-nav">
-    <button class="nav-btn active" data-page="dashboard">🏠 Dashboard</button>
-    <button class="nav-btn" data-page="surat-masuk">📥 Surat Masuk</button>
-    <button class="nav-btn" data-page="surat-keluar">📤 Surat Keluar</button>
-    <button class="nav-btn" data-page="arsip">🗄️ Arsip</button>
-    <button class="nav-btn" data-page="permintaan-surat">📝 Permintaan Surat</button>
-    <button class="nav-btn" data-page="buku-induk">📒 Buku Induk Pegawai</button>
-    <button class="nav-btn admin-only" data-page="pengguna">👥 Pengguna</button>
-    <button class="nav-btn admin-only" data-page="setting">⚙️ Setting</button>
-    <button class="nav-btn" id="btnRefresh" style="margin-left:auto" onclick="muatUlangData()" title="Ambil ulang data terbaru dari server">🔄 Segarkan</button>
-    <button class="nav-btn" id="navUserName" onclick="bukaAkunSaya()" title="Akun Saya">👤 Akun</button>
-    <button class="nav-btn" style="color:#b02a2a" onclick="logoutAdmin()">🚪 Keluar</button>
-  </nav>
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="sidebar" id="sidebar" aria-label="Menu utama">
+    <div class="sb-brand">
+      <img id="logoImg" class="sb-logo" style="display:none" onerror="this.style.display='none'" alt="Logo Sekolah">
+      <div class="sb-brand-text">
+        <div class="sb-title js-app-title">Aplikasi Tata Usaha</div>
+        <div class="sb-school js-school-name">SMP Islam Terpadu Al Mubarok</div>
+      </div>
+    </div>
+
+    <nav class="sb-nav">
+      <div class="sb-group">Utama</div>
+      <button class="side-btn active" data-page="dashboard" title="Dashboard"><svg class="ico"><use href="#i-home"/></svg><span class="lbl">Dashboard</span></button>
+
+      <div class="sb-group">Persuratan</div>
+      <button class="side-btn" data-page="surat-masuk" title="Surat Masuk"><svg class="ico"><use href="#i-inbox"/></svg><span class="lbl">Surat Masuk</span><span class="cnt zero" id="cntMasuk">0</span></button>
+      <button class="side-btn" data-page="surat-keluar" title="Surat Keluar"><svg class="ico"><use href="#i-send"/></svg><span class="lbl">Surat Keluar</span><span class="cnt zero" id="cntKeluar">0</span></button>
+      <button class="side-btn" data-page="arsip" title="Arsip"><svg class="ico"><use href="#i-archive"/></svg><span class="lbl">Arsip</span><span class="cnt zero" id="cntArsip">0</span></button>
+      <button class="side-btn" data-page="permintaan-surat" title="Permintaan Surat"><svg class="ico"><use href="#i-filetext"/></svg><span class="lbl">Permintaan Surat</span><span class="cnt cnt-baru zero" id="cntPermintaan" title="Permintaan berstatus Baru">0</span></button>
+
+      <div class="sb-group">Kepegawaian</div>
+      <button class="side-btn" data-page="buku-induk" title="Buku Induk Pegawai"><svg class="ico"><use href="#i-book"/></svg><span class="lbl">Buku Induk Pegawai</span></button>
+
+      <div class="sb-group admin-only">Sistem</div>
+      <button class="side-btn admin-only" data-page="pengguna" title="Pengguna"><svg class="ico"><use href="#i-users"/></svg><span class="lbl">Pengguna</span></button>
+      <button class="side-btn admin-only" data-page="setting" title="Pengaturan"><svg class="ico"><use href="#i-sliders"/></svg><span class="lbl">Pengaturan</span></button>
+    </nav>
+
+    <div class="sb-user">
+      <button type="button" class="sb-me" onclick="bukaAkunSaya()" title="Akun Saya">
+        <span class="avatar" id="userAvatar">A</span>
+        <span class="me-text"><b id="navUserName">Akun</b><small id="userRole">Admin</small></span>
+      </button>
+      <div class="sb-actions">
+        <button type="button" class="sb-icon" id="btnRefresh" onclick="muatUlangData()" title="Segarkan data" aria-label="Segarkan data"><svg class="ico"><use href="#i-refresh"/></svg></button>
+        <button type="button" class="sb-icon danger" onclick="logoutAdmin()" title="Keluar" aria-label="Keluar"><svg class="ico"><use href="#i-logout"/></svg></button>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main">
+
+  <!-- ===== TOPBAR ===== -->
+  <header class="topbar">
+    <button type="button" class="tb-toggle" onclick="toggleSidebar()" title="Ciutkan / lebarkan menu" aria-label="Ciutkan atau lebarkan menu"><svg class="ico"><use href="#i-menu"/></svg></button>
+    <div class="crumb"><span>Portal Admin</span><svg class="ico sep"><use href="#i-chev"/></svg><b id="crumbPage">Dashboard</b></div>
+    <div class="tb-date" id="tbDate"></div>
+  </header>
 
   <!-- ===== KONTEN ===== -->
   <main class="app-content">
@@ -461,15 +643,50 @@
     <!-- SURAT MASUK -->
     <section id="page-surat-masuk" class="page">
       <div class="page-head">
-        <h2>Surat Masuk</h2>
-        <button class="btn-primary" onclick="openModal('modalSuratMasuk')">+ Tambah Surat Masuk</button>
+        <div>
+          <h2>Surat Masuk</h2>
+          <p class="page-sub">Catat, telusuri, dan cetak daftar surat yang diterima sekolah.</p>
+        </div>
+        <div class="head-actions">
+          <button type="button" class="btn-secondary btn-ico" id="btnCetak-masuk" onclick="cetakPdf('masuk')"><svg class="ico"><use href="#i-printer"/></svg>Cetak PDF</button>
+          <button type="button" class="btn-primary btn-ico" onclick="openModal('modalSuratMasuk')"><svg class="ico"><use href="#i-plus"/></svg>Tambah Surat Masuk</button>
+        </div>
+      </div>
+      <div class="filter-bar" id="filter-fm">
+        <div class="f-field f-grow">
+          <label for="fmCari">Cari</label>
+          <div class="f-search"><svg class="ico"><use href="#i-search"/></svg><input type="search" id="fmCari" placeholder="No surat, asal, atau perihal…" oninput="renderSuratMasuk()"></div>
+        </div>
+        <div class="f-field">
+          <label for="fmPihak">Asal surat</label>
+          <select id="fmPihak" onchange="renderSuratMasuk()"><option value="">Semua</option></select>
+        </div>
+        <div class="f-field">
+          <label for="fmDari">Tgl terima dari</label>
+          <input type="date" id="fmDari" onchange="renderSuratMasuk()">
+        </div>
+        <div class="f-field">
+          <label for="fmSampai">Sampai</label>
+          <input type="date" id="fmSampai" onchange="renderSuratMasuk()">
+        </div>
+        <div class="f-field">
+          <label for="fmFile">Berkas</label>
+          <select id="fmFile" onchange="renderSuratMasuk()"><option value="">Semua</option><option value="ada">Sudah ada file</option><option value="belum">Belum ada file</option></select>
+        </div>
+      </div>
+      <div class="filter-meta">
+        <div class="chips" data-bar="fm">
+          <button type="button" class="chip" data-per="semua" onclick="setPeriode('masuk','semua')">Semua waktu</button>
+          <button type="button" class="chip" data-per="bulan" onclick="setPeriode('masuk','bulan')">Bulan ini</button>
+          <button type="button" class="chip" data-per="tahun" onclick="setPeriode('masuk','tahun')">Tahun ini</button>
+        </div>
+        <span class="meta-text" id="meta-masuk"></span>
+        <button type="button" class="btn-link-inline" id="reset-masuk" onclick="resetFilter('masuk')">Atur ulang filter</button>
       </div>
       <div class="table-wrap">
-      <table class="data-table">
-        <thead><tr>
-          <th>No Surat</th><th>Tgl Surat</th><th>Tgl Terima</th><th>Asal</th>
-          <th>Perihal</th><th>File</th><th>Aksi</th>
-        </tr></thead>
+      <table class="data-table tbl-fixed">
+        <colgroup><col style="width:5%"><col style="width:16%"><col style="width:10%"><col style="width:10%"><col style="width:16%"><col style="width:22%"><col style="width:10%"><col style="width:11%"></colgroup>
+        <thead><tr><th>No</th><th>No Surat</th><th>Tgl Surat</th><th>Tgl Terima</th><th>Asal</th><th>Perihal</th><th>File</th><th>Aksi</th></tr></thead>
         <tbody id="tblSuratMasuk"></tbody>
       </table>
       </div>
@@ -478,15 +695,50 @@
     <!-- SURAT KELUAR -->
     <section id="page-surat-keluar" class="page">
       <div class="page-head">
-        <h2>Surat Keluar</h2>
-        <button class="btn-primary" onclick="openModal('modalSuratKeluar')">+ Tambah Surat Keluar</button>
+        <div>
+          <h2>Surat Keluar</h2>
+          <p class="page-sub">Catat, telusuri, dan cetak daftar surat yang dikirim sekolah.</p>
+        </div>
+        <div class="head-actions">
+          <button type="button" class="btn-secondary btn-ico" id="btnCetak-keluar" onclick="cetakPdf('keluar')"><svg class="ico"><use href="#i-printer"/></svg>Cetak PDF</button>
+          <button type="button" class="btn-primary btn-ico" onclick="openModal('modalSuratKeluar')"><svg class="ico"><use href="#i-plus"/></svg>Tambah Surat Keluar</button>
+        </div>
+      </div>
+      <div class="filter-bar" id="filter-fk">
+        <div class="f-field f-grow">
+          <label for="fkCari">Cari</label>
+          <div class="f-search"><svg class="ico"><use href="#i-search"/></svg><input type="search" id="fkCari" placeholder="No surat, tujuan, atau perihal…" oninput="renderSuratKeluar()"></div>
+        </div>
+        <div class="f-field">
+          <label for="fkPihak">Tujuan surat</label>
+          <select id="fkPihak" onchange="renderSuratKeluar()"><option value="">Semua</option></select>
+        </div>
+        <div class="f-field">
+          <label for="fkDari">Tgl kirim dari</label>
+          <input type="date" id="fkDari" onchange="renderSuratKeluar()">
+        </div>
+        <div class="f-field">
+          <label for="fkSampai">Sampai</label>
+          <input type="date" id="fkSampai" onchange="renderSuratKeluar()">
+        </div>
+        <div class="f-field">
+          <label for="fkFile">Berkas</label>
+          <select id="fkFile" onchange="renderSuratKeluar()"><option value="">Semua</option><option value="ada">Sudah ada file</option><option value="belum">Belum ada file</option></select>
+        </div>
+      </div>
+      <div class="filter-meta">
+        <div class="chips" data-bar="fk">
+          <button type="button" class="chip" data-per="semua" onclick="setPeriode('keluar','semua')">Semua waktu</button>
+          <button type="button" class="chip" data-per="bulan" onclick="setPeriode('keluar','bulan')">Bulan ini</button>
+          <button type="button" class="chip" data-per="tahun" onclick="setPeriode('keluar','tahun')">Tahun ini</button>
+        </div>
+        <span class="meta-text" id="meta-keluar"></span>
+        <button type="button" class="btn-link-inline" id="reset-keluar" onclick="resetFilter('keluar')">Atur ulang filter</button>
       </div>
       <div class="table-wrap">
-      <table class="data-table">
-        <thead><tr>
-          <th>No Surat</th><th>Tgl Kirim</th><th>Tujuan</th>
-          <th>Perihal</th><th>File</th><th>Aksi</th>
-        </tr></thead>
+      <table class="data-table tbl-fixed">
+        <colgroup><col style="width:5%"><col style="width:18%"><col style="width:11%"><col style="width:20%"><col style="width:26%"><col style="width:10%"><col style="width:10%"></colgroup>
+        <thead><tr><th>No</th><th>No Surat</th><th>Tgl Kirim</th><th>Tujuan</th><th>Perihal</th><th>File</th><th>Aksi</th></tr></thead>
         <tbody id="tblSuratKeluar"></tbody>
       </table>
       </div>
@@ -495,14 +747,49 @@
     <!-- ARSIP -->
     <section id="page-arsip" class="page">
       <div class="page-head">
-        <h2>Arsip</h2>
-        <button class="btn-primary" onclick="openModal('modalArsip')">+ Tambah Arsip</button>
+        <div>
+          <h2>Arsip</h2>
+          <p class="page-sub">Simpan dan cari dokumen arsip berdasarkan kategori.</p>
+        </div>
+        <div class="head-actions">
+          <button type="button" class="btn-primary btn-ico" onclick="openModal('modalArsip')"><svg class="ico"><use href="#i-plus"/></svg>Tambah Arsip</button>
+        </div>
+      </div>
+      <div class="filter-bar" id="filter-fa">
+        <div class="f-field f-grow">
+          <label for="faCari">Cari</label>
+          <div class="f-search"><svg class="ico"><use href="#i-search"/></svg><input type="search" id="faCari" placeholder="Perihal atau kategori…" oninput="renderArsip()"></div>
+        </div>
+        <div class="f-field">
+          <label for="faPihak">Kategori</label>
+          <select id="faPihak" onchange="renderArsip()"><option value="">Semua</option></select>
+        </div>
+        <div class="f-field">
+          <label for="faDari">Tanggal dari</label>
+          <input type="date" id="faDari" onchange="renderArsip()">
+        </div>
+        <div class="f-field">
+          <label for="faSampai">Sampai</label>
+          <input type="date" id="faSampai" onchange="renderArsip()">
+        </div>
+        <div class="f-field">
+          <label for="faFile">Berkas</label>
+          <select id="faFile" onchange="renderArsip()"><option value="">Semua</option><option value="ada">Sudah ada file</option><option value="belum">Belum ada file</option></select>
+        </div>
+      </div>
+      <div class="filter-meta">
+        <div class="chips" data-bar="fa">
+          <button type="button" class="chip" data-per="semua" onclick="setPeriode('arsip','semua')">Semua waktu</button>
+          <button type="button" class="chip" data-per="bulan" onclick="setPeriode('arsip','bulan')">Bulan ini</button>
+          <button type="button" class="chip" data-per="tahun" onclick="setPeriode('arsip','tahun')">Tahun ini</button>
+        </div>
+        <span class="meta-text" id="meta-arsip"></span>
+        <button type="button" class="btn-link-inline" id="reset-arsip" onclick="resetFilter('arsip')">Atur ulang filter</button>
       </div>
       <div class="table-wrap">
-      <table class="data-table">
-        <thead><tr>
-          <th>Perihal</th><th>Tanggal</th><th>Kategori</th><th>File</th><th>Aksi</th>
-        </tr></thead>
+      <table class="data-table tbl-fixed">
+        <colgroup><col style="width:5%"><col style="width:36%"><col style="width:13%"><col style="width:20%"><col style="width:13%"><col style="width:13%"></colgroup>
+        <thead><tr><th>No</th><th>Perihal</th><th>Tanggal</th><th>Kategori</th><th>File</th><th>Aksi</th></tr></thead>
         <tbody id="tblArsip"></tbody>
       </table>
       </div>
@@ -588,15 +875,17 @@
   <footer class="app-footer">
     <span class="js-footer">© SMP Islam Terpadu Al Mubarok</span>
   </footer>
+  </div><!-- /main -->
+  </div><!-- /shell -->
 
   <!-- ===== BOTTOM NAVIGATION (tampil di layar HP) ===== -->
   <nav class="bottom-nav">
     <div class="bottom-nav-list">
-      <button class="bottom-nav-btn active" data-page="dashboard"><span class="icon">🏠</span>Beranda</button>
-      <button class="bottom-nav-btn" data-page="surat-masuk"><span class="icon">📥</span>Masuk</button>
-      <button class="bottom-nav-btn" data-page="surat-keluar"><span class="icon">📤</span>Keluar</button>
-      <button class="bottom-nav-btn" data-page="arsip"><span class="icon">🗄️</span>Arsip</button>
-      <button class="bottom-nav-btn" id="bottomNavMore" onclick="openModal('moreSheet')"><span class="icon">☰</span>Lainnya</button>
+      <button class="bottom-nav-btn active" data-page="dashboard"><svg class="ico"><use href="#i-home"/></svg>Beranda</button>
+      <button class="bottom-nav-btn" data-page="surat-masuk"><svg class="ico"><use href="#i-inbox"/></svg>Masuk</button>
+      <button class="bottom-nav-btn" data-page="surat-keluar"><svg class="ico"><use href="#i-send"/></svg>Keluar</button>
+      <button class="bottom-nav-btn" data-page="arsip"><svg class="ico"><use href="#i-archive"/></svg>Arsip</button>
+      <button class="bottom-nav-btn" id="bottomNavMore" onclick="openModal('moreSheet')"><svg class="ico"><use href="#i-menu"/></svg>Lainnya</button>
     </div>
   </nav>
   </div><!-- /adminView -->
@@ -606,13 +895,13 @@
     <div class="modal-box">
       <h3 style="margin-top:0;color:var(--hijau-tua)">Menu Lainnya</h3>
       <div class="more-list">
-        <button class="more-item" onclick="showPage('permintaan-surat')"><span class="icon">📝</span>Permintaan Surat</button>
-        <button class="more-item" onclick="showPage('buku-induk')"><span class="icon">📒</span>Buku Induk Pegawai</button>
-        <button class="more-item admin-only" onclick="showPage('pengguna')"><span class="icon">👥</span>Pengguna</button>
-        <button class="more-item admin-only" onclick="showPage('setting')"><span class="icon">⚙️</span>Pengaturan</button>
-        <button class="more-item" onclick="closeModal('moreSheet');muatUlangData()"><span class="icon">🔄</span>Segarkan Data</button>
-        <button class="more-item" onclick="bukaAkunSaya()"><span class="icon">👤</span>Akun Saya</button>
-        <button class="more-item danger" onclick="closeModal('moreSheet');logoutAdmin()"><span class="icon">🚪</span>Keluar</button>
+        <button class="more-item" onclick="showPage('permintaan-surat')"><svg class="ico"><use href="#i-filetext"/></svg>Permintaan Surat</button>
+        <button class="more-item" onclick="showPage('buku-induk')"><svg class="ico"><use href="#i-book"/></svg>Buku Induk Pegawai</button>
+        <button class="more-item admin-only" onclick="showPage('pengguna')"><svg class="ico"><use href="#i-users"/></svg>Pengguna</button>
+        <button class="more-item admin-only" onclick="showPage('setting')"><svg class="ico"><use href="#i-sliders"/></svg>Pengaturan</button>
+        <button class="more-item" onclick="closeModal('moreSheet');muatUlangData()"><svg class="ico"><use href="#i-refresh"/></svg>Segarkan Data</button>
+        <button class="more-item" onclick="bukaAkunSaya()"><svg class="ico"><use href="#i-users"/></svg>Akun Saya</button>
+        <button class="more-item danger" onclick="closeModal('moreSheet');logoutAdmin()"><svg class="ico"><use href="#i-logout"/></svg>Keluar</button>
       </div>
       <div class="modal-actions">
         <button type="button" class="btn-secondary" onclick="closeModal('moreSheet')">Tutup</button>
@@ -860,26 +1149,38 @@
   // Tombol "Segarkan": ambil ulang semua data (mis. untuk melihat perubahan pengguna lain).
   function muatUlangData() {
     const btn = document.getElementById('btnRefresh');
-    btn.disabled = true; btn.textContent = '⏳ Memuat...';
+    btn.disabled = true; btn.classList.add('spin');
     api('getAllData').then(applyAllData).catch(apiError)
-      .finally(() => { btn.disabled = false; btn.textContent = '🔄 Segarkan'; });
+      .finally(() => { btn.disabled = false; btn.classList.remove('spin'); });
   }
 
   function isAdmin() { return !!currentUser && currentUser['Role'] === 'Admin'; }
 
   // Tampilkan nama pengguna & sembunyikan menu khusus Admin bagi Petugas
   function applyUser() {
-    document.getElementById('navUserName').textContent = '👤 ' + (currentUser['Nama Lengkap'] || currentUser['Username']);
+    const nama = currentUser['Nama Lengkap'] || currentUser['Username'] || 'Akun';
+    document.getElementById('navUserName').textContent = nama;
+    document.getElementById('userRole').textContent = currentUser['Role'] || '';
+    document.getElementById('userAvatar').textContent = String(nama).trim().charAt(0).toUpperCase() || '?';
+    document.getElementById('tbDate').textContent =
+      new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
     document.querySelectorAll('.admin-only').forEach(el => el.classList.toggle('hidden', !isAdmin()));
   }
 
   // ============ NAVIGASI (Portal Admin: nav atas desktop + bottom nav HP) ============
-  document.querySelectorAll('.nav-btn[data-page], .bottom-nav-btn[data-page]').forEach(btn => {
+  document.querySelectorAll('.side-btn[data-page], .bottom-nav-btn[data-page]').forEach(btn => {
     btn.addEventListener('click', () => showPage(btn.dataset.page));
   });
 
   // Riwayat halaman Portal Admin (dipakai tombol Back)
   let pageStack = ['dashboard'];
+
+  const PAGE_TITLES = {
+    'dashboard': 'Dashboard', 'surat-masuk': 'Surat Masuk', 'surat-keluar': 'Surat Keluar', 'arsip': 'Arsip',
+    'permintaan-surat': 'Permintaan Surat', 'buku-induk': 'Buku Induk Pegawai', 'pengguna': 'Pengguna', 'setting': 'Pengaturan'
+  };
+
+  function toggleSidebar() { document.getElementById('shell').classList.toggle('collapsed'); }
 
   function showPage(name, isBack) {
     // Menu khusus Admin tidak bisa dibuka Petugas
@@ -894,14 +1195,17 @@
       }
     }
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.nav-btn[data-page]').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.side-btn[data-page]').forEach(b => b.classList.remove('active'));
     document.querySelectorAll('.bottom-nav-btn[data-page]').forEach(b => b.classList.remove('active'));
     document.getElementById('bottomNavMore').classList.remove('active');
 
     document.getElementById('page-' + name).classList.add('active');
 
-    const topBtn = document.querySelector('.nav-btn[data-page="' + name + '"]');
+    const topBtn = document.querySelector('.side-btn[data-page="' + name + '"]');
     if (topBtn) topBtn.classList.add('active');
+    const crumb = document.getElementById('crumbPage');
+    if (crumb) crumb.textContent = PAGE_TITLES[name] || '';
+    window.scrollTo(0, 0);
 
     const bottomBtn = document.querySelector('.bottom-nav-btn[data-page="' + name + '"]');
     if (bottomBtn) bottomBtn.classList.add('active');
@@ -1191,6 +1495,7 @@
       return !isNaN(d) && d.getMonth() === bln && d.getFullYear() === thn;
     }).length;
 
+    updateCounts();
     document.getElementById('statMasuk').textContent = DB.suratMasuk.length;
     document.getElementById('statKeluar').textContent = DB.suratKeluar.length;
     document.getElementById('statArsip').textContent = DB.arsip.length;
@@ -1218,18 +1523,220 @@
     if (!terbaru.length) tbodyPg.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#888">Belum ada permintaan surat.</td></tr>';
   }
 
+  // ============ HITUNGAN DI SIDEBAR ============
+  function updateCounts() {
+    const set = (id, n) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.textContent = n;
+      el.classList.toggle('zero', !n);
+    };
+    set('cntMasuk', DB.suratMasuk.length);
+    set('cntKeluar', DB.suratKeluar.length);
+    set('cntArsip', DB.arsip.length);
+    set('cntPermintaan', DB.permintaan.filter(p => (p['Status'] || 'Baru') === 'Baru').length);
+  }
+
+  // ============ FILTER (Surat Masuk, Surat Keluar, Arsip) ============
+  // p = awalan id input filter: {p}Cari, {p}Pihak, {p}Dari, {p}Sampai, {p}File
+  const FILTER_CFG = {
+    masuk:  { p: 'fm', data: () => DB.suratMasuk,  dateF: 'Tanggal Terima', text: ['No Surat', 'Asal Surat', 'Perihal'],
+              party: 'Asal Surat',   allLabel: 'Semua asal',     noun: 'surat masuk',  render: () => renderSuratMasuk() },
+    keluar: { p: 'fk', data: () => DB.suratKeluar, dateF: 'Tanggal Kirim',  text: ['No Surat', 'Tujuan Surat', 'Perihal'],
+              party: 'Tujuan Surat', allLabel: 'Semua tujuan',   noun: 'surat keluar', render: () => renderSuratKeluar() },
+    arsip:  { p: 'fa', data: () => DB.arsip,       dateF: 'Tanggal',        text: ['Perihal', 'Kategori'],
+              party: 'Kategori',     allLabel: 'Semua kategori', noun: 'arsip',        render: () => renderArsip() }
+  };
+
+  // Isi pilihan "asal / tujuan / kategori" dari data yang ada (pilihan aktif dipertahankan).
+  function fillPihak(kind) {
+    const c = FILTER_CFG[kind];
+    const sel = document.getElementById(c.p + 'Pihak');
+    const vals = Array.from(new Set(c.data().map(x => String(x[c.party] || '').trim()).filter(Boolean)))
+      .sort((a, b) => a.localeCompare(b, 'id'));
+    const sig = vals.join('\u0001');
+    if (sel.dataset.sig === sig) return;
+    const cur = sel.value;
+    sel.innerHTML = '<option value="">' + esc(c.allLabel) + '</option>' +
+      vals.map(v => '<option value="' + esc(v) + '">' + esc(v) + '</option>').join('');
+    sel.dataset.sig = sig;
+    sel.value = vals.indexOf(cur) >= 0 ? cur : '';
+  }
+
+  // Data setelah filter diterapkan (urutan sama seperti di database).
+  function getFiltered(kind) {
+    const c = FILTER_CFG[kind];
+    fillPihak(kind);
+    const q = val(c.p + 'Cari').trim().toLowerCase();
+    const pihak = val(c.p + 'Pihak');
+    const dari = val(c.p + 'Dari');
+    const sampai = val(c.p + 'Sampai');
+    const file = val(c.p + 'File');
+    return c.data().filter(x => {
+      if (q && !c.text.some(f => String(x[f] || '').toLowerCase().indexOf(q) >= 0)) return false;
+      if (pihak && String(x[c.party] || '').trim() !== pihak) return false;
+      if (dari || sampai) {
+        const t = toInputDate(x[c.dateF]);
+        if (!t) return false;
+        if (dari && t < dari) return false;
+        if (sampai && t > sampai) return false;
+      }
+      if (file === 'ada' && !x['Link File']) return false;
+      if (file === 'belum' && x['Link File']) return false;
+      return true;
+    });
+  }
+
+  function filterAktif(kind) {
+    const p = FILTER_CFG[kind].p;
+    return !!(val(p + 'Cari').trim() || val(p + 'Pihak') || val(p + 'Dari') || val(p + 'Sampai') || val(p + 'File'));
+  }
+
+  function rentangPeriode(mode) {
+    const now = new Date(), y = now.getFullYear(), m = now.getMonth();
+    if (mode === 'bulan') return [toInputDate(new Date(y, m, 1)), toInputDate(new Date(y, m + 1, 0))];
+    if (mode === 'tahun') return [toInputDate(new Date(y, 0, 1)), toInputDate(new Date(y, 11, 31))];
+    return ['', ''];
+  }
+
+  function setPeriode(kind, mode) {
+    const c = FILTER_CFG[kind];
+    const r = rentangPeriode(mode);
+    document.getElementById(c.p + 'Dari').value = r[0];
+    document.getElementById(c.p + 'Sampai').value = r[1];
+    c.render();
+  }
+
+  function resetFilter(kind) {
+    const p = FILTER_CFG[kind].p;
+    ['Cari', 'Pihak', 'Dari', 'Sampai', 'File'].forEach(s => { document.getElementById(p + s).value = ''; });
+    FILTER_CFG[kind].render();
+  }
+
+  // Teks "Menampilkan x dari y", penanda periode aktif, dan tombol cetak.
+  function updateFilterUi(kind, shown, total) {
+    const c = FILTER_CFG[kind];
+    const aktif = filterAktif(kind);
+    document.getElementById('meta-' + kind).textContent =
+      aktif ? ('Menampilkan ' + shown + ' dari ' + total + ' ' + c.noun) : (total + ' ' + c.noun);
+    document.getElementById('reset-' + kind).classList.toggle('hidden', !aktif);
+    const dari = val(c.p + 'Dari'), sampai = val(c.p + 'Sampai');
+    document.querySelectorAll('.chips[data-bar="' + c.p + '"] .chip').forEach(ch => {
+      const r = rentangPeriode(ch.dataset.per);
+      ch.classList.toggle('on', r[0] === dari && r[1] === sampai);
+    });
+    const pb = document.getElementById('btnCetak-' + kind);
+    if (pb) pb.disabled = !shown;
+  }
+
+  function emptyRow(kind, cols, total) {
+    return '<tr><td colspan="' + cols + '" class="empty">' +
+      (total ? 'Tidak ada ' + FILTER_CFG[kind].noun + ' yang cocok dengan filter.' : 'Belum ada ' + FILTER_CFG[kind].noun + '.') +
+      '</td></tr>';
+  }
+
+  // ============ CETAK PDF (Surat Masuk & Surat Keluar, mengikuti filter) ============
+  // Membuka dialog cetak browser dengan format laporan A4 landscape.
+  // Pilih "Simpan sebagai PDF" / "Save as PDF" pada tujuan printer untuk menghasilkan file PDF.
+  function cetakPdf(kind) {
+    const c = FILTER_CFG[kind];
+    const list = getFiltered(kind).slice().sort((a, b) =>
+      toInputDate(a[c.dateF]).localeCompare(toInputDate(b[c.dateF])));
+    if (!list.length) { alert('Tidak ada data untuk dicetak. Ubah filter terlebih dahulu.'); return; }
+
+    const s = DB.settings || {};
+    const sekolah = s.NamaSekolah || CONFIG.SCHOOL_NAME;
+    const masuk = kind === 'masuk';
+    const judul = masuk ? 'Daftar Surat Masuk' : 'Daftar Surat Keluar';
+
+    const cols = masuk
+      ? [['No', 5, (x, i) => i + 1], ['No Surat', 19, x => x['No Surat']],
+         ['Tanggal Surat', 12, x => fmtDateLong(x['Tanggal Surat'])], ['Tanggal Terima', 12, x => fmtDateLong(x['Tanggal Terima'])],
+         ['Asal Surat', 20, x => x['Asal Surat']], ['Perihal', 32, x => x['Perihal']]]
+      : [['No', 5, (x, i) => i + 1], ['No Surat', 21, x => x['No Surat']],
+         ['Tanggal Kirim', 13, x => fmtDateLong(x['Tanggal Kirim'])],
+         ['Tujuan Surat', 25, x => x['Tujuan Surat']], ['Perihal', 36, x => x['Perihal']]];
+
+    const dari = val(c.p + 'Dari'), sampai = val(c.p + 'Sampai'), pihak = val(c.p + 'Pihak');
+    const q = val(c.p + 'Cari').trim(), file = val(c.p + 'File');
+    const info = [];
+    info.push(dari || sampai
+      ? 'Periode: ' + (dari ? fmtDateLong(dari) : 'awal') + ' s.d. ' + (sampai ? fmtDateLong(sampai) : 'sekarang')
+      : 'Periode: semua tanggal');
+    if (pihak) info.push((masuk ? 'Asal surat: ' : 'Tujuan surat: ') + pihak);
+    if (q) info.push('Kata kunci: \u201C' + q + '\u201D');
+    if (file) info.push(file === 'ada' ? 'Hanya yang sudah ada file' : 'Hanya yang belum ada file');
+
+    const kop = s.KopSuratUrl
+      ? '<img class="kop" src="' + esc(s.KopSuratUrl) + '" alt="">'
+      : '<div class="idn">' + (s.LogoUrl ? '<img class="logo" src="' + esc(s.LogoUrl) + '" alt="">' : '') +
+        '<div><div class="sch">' + esc(sekolah) + '</div><div class="app">Tata Usaha</div></div></div>';
+
+    const head = cols.map(k => '<th>' + k[0] + '</th>').join('');
+    const colgroup = cols.map(k => '<col style="width:' + k[1] + '%">').join('');
+    const body = list.map((x, i) =>
+      '<tr>' + cols.map((k, ci) => '<td' + (ci === 0 ? ' class="c"' : '') + '>' + esc(k[2](x, i)) + '</td>').join('') + '</tr>'
+    ).join('');
+
+    const waktu = new Date().toLocaleString('id-ID', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    const petugas = currentUser ? (currentUser['Nama Lengkap'] || currentUser['Username']) : '';
+
+    const html = '<!DOCTYPE html><html lang="id"><head><meta charset="utf-8"><title>' + esc(judul) + '</title><style>' +
+      '@page{size:A4 landscape;margin:12mm 12mm 14mm}' +
+      '*{box-sizing:border-box}' +
+      'body{font-family:Arial,Helvetica,sans-serif;color:#111;font-size:10.5pt;margin:0}' +
+      '.kop{display:block;width:100%;max-height:36mm;object-fit:contain}' +
+      '.idn{display:flex;align-items:center;gap:12px}.idn .logo{height:18mm;width:18mm;object-fit:contain}' +
+      '.sch{font-size:15pt;font-weight:700}.app{font-size:10pt;color:#444}' +
+      'hr.line{border:0;border-top:2.5px solid #111;margin:6px 0 10px}' +
+      'h1{font-size:14pt;text-align:center;margin:0 0 4px;text-transform:uppercase;letter-spacing:.3px}' +
+      '.info{text-align:center;font-size:9.5pt;color:#333;margin:0 0 10px;line-height:1.5}' +
+      'table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:9.5pt}' +
+      'th,td{border:1px solid #333;padding:5px 6px;vertical-align:top;overflow-wrap:anywhere;text-align:left}' +
+      'td.c,th:first-child{text-align:center}' +
+      'th{background:#e3ece6;font-weight:700;-webkit-print-color-adjust:exact;print-color-adjust:exact}' +
+      'thead{display:table-header-group}tr{page-break-inside:avoid}' +
+      '.foot{margin-top:10px;font-size:9pt;display:flex;justify-content:space-between;color:#333}' +
+      '</style></head><body>' + kop + '<hr class="line">' +
+      '<h1>' + esc(judul) + '</h1><div class="info">' + info.map(esc).join(' &nbsp;|&nbsp; ') + '</div>' +
+      '<table><colgroup>' + colgroup + '</colgroup><thead><tr>' + head + '</tr></thead><tbody>' + body + '</tbody></table>' +
+      '<div class="foot"><span>Total: ' + list.length + ' surat</span><span>Dicetak ' + esc(waktu) +
+      (petugas ? ' oleh ' + esc(petugas) : '') + '</span></div></body></html>';
+
+    const iframe = document.createElement('iframe');
+    iframe.setAttribute('aria-hidden', 'true');
+    iframe.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0;visibility:hidden';
+    document.body.appendChild(iframe);
+    const idoc = iframe.contentWindow.document;
+    idoc.open(); idoc.write(html); idoc.close();
+
+    const judulAsli = document.title;
+    const bersih = () => { document.title = judulAsli; if (iframe.parentNode) iframe.parentNode.removeChild(iframe); };
+    // Tunggu gambar kop selesai dimuat (maks. 4 detik) sebelum mencetak.
+    const tunggu = Array.from(idoc.images).map(img => img.complete ? Promise.resolve() :
+      new Promise(r => { img.onload = img.onerror = r; }));
+    Promise.race([Promise.all(tunggu), new Promise(r => setTimeout(r, 4000))]).then(() => {
+      document.title = judul + (dari || sampai ? ' ' + (dari || '') + ' - ' + (sampai || '') : '');
+      iframe.contentWindow.onafterprint = bersih;
+      iframe.contentWindow.focus();
+      iframe.contentWindow.print();
+      setTimeout(bersih, 120000);
+    });
+  }
+
   // ============ SURAT MASUK ============
   function renderSuratMasuk() {
     const tbody = document.getElementById('tblSuratMasuk');
-    tbody.innerHTML = '';
-    DB.suratMasuk.slice().reverse().forEach(s => {
-      tbody.innerHTML +=
-        '<tr><td>' + esc(s['No Surat']) + '</td><td>' + fmtDate(s['Tanggal Surat']) +
-        '</td><td>' + fmtDate(s['Tanggal Terima']) + '</td><td>' + esc(s['Asal Surat']) +
-        '</td><td>' + esc(s['Perihal']) + '</td>' +
-        '<td>' + fileCellUpload(s['Link File'], 'masuk', s['ID']) + '</td>' +
-        '<td><button class="btn-danger" onclick="hapusSuratMasuk(\'' + esc(s['ID']) + '\')">Hapus</button></td></tr>';
-    });
+    const list = getFiltered('masuk').slice().reverse();
+    tbody.innerHTML = list.map((s, i) =>
+      '<tr><td class="c-no">' + (i + 1) + '</td><td>' + esc(s['No Surat']) +
+      '</td><td class="c-date">' + fmtDate(s['Tanggal Surat']) +
+      '</td><td class="c-date">' + fmtDate(s['Tanggal Terima']) + '</td><td>' + esc(s['Asal Surat']) +
+      '</td><td>' + esc(s['Perihal']) + '</td>' +
+      '<td>' + fileCellUpload(s['Link File'], 'masuk', s['ID']) + '</td>' +
+      '<td><button class="btn-danger" onclick="hapusSuratMasuk(\'' + esc(s['ID']) + '\')">Hapus</button></td></tr>'
+    ).join('') || emptyRow('masuk', 8, DB.suratMasuk.length);
+    updateFilterUi('masuk', list.length, DB.suratMasuk.length);
   }
 
   function submitSuratMasuk(e) {
@@ -1257,14 +1764,15 @@
   // ============ SURAT KELUAR ============
   function renderSuratKeluar() {
     const tbody = document.getElementById('tblSuratKeluar');
-    tbody.innerHTML = '';
-    DB.suratKeluar.slice().reverse().forEach(s => {
-      tbody.innerHTML +=
-        '<tr><td>' + esc(s['No Surat']) + '</td><td>' + fmtDate(s['Tanggal Kirim']) +
-        '</td><td>' + esc(s['Tujuan Surat']) + '</td><td>' + esc(s['Perihal']) + '</td>' +
-        '<td>' + fileCellUpload(s['Link File'], 'keluar', s['ID']) + '</td>' +
-        '<td><button class="btn-danger" onclick="hapusSuratKeluar(\'' + esc(s['ID']) + '\')">Hapus</button></td></tr>';
-    });
+    const list = getFiltered('keluar').slice().reverse();
+    tbody.innerHTML = list.map((s, i) =>
+      '<tr><td class="c-no">' + (i + 1) + '</td><td>' + esc(s['No Surat']) +
+      '</td><td class="c-date">' + fmtDate(s['Tanggal Kirim']) +
+      '</td><td>' + esc(s['Tujuan Surat']) + '</td><td>' + esc(s['Perihal']) + '</td>' +
+      '<td>' + fileCellUpload(s['Link File'], 'keluar', s['ID']) + '</td>' +
+      '<td><button class="btn-danger" onclick="hapusSuratKeluar(\'' + esc(s['ID']) + '\')">Hapus</button></td></tr>'
+    ).join('') || emptyRow('keluar', 7, DB.suratKeluar.length);
+    updateFilterUi('keluar', list.length, DB.suratKeluar.length);
   }
 
   function submitSuratKeluar(e) {
@@ -1291,14 +1799,14 @@
   // ============ ARSIP ============
   function renderArsip() {
     const tbody = document.getElementById('tblArsip');
-    tbody.innerHTML = '';
-    DB.arsip.slice().reverse().forEach(a => {
-      tbody.innerHTML +=
-        '<tr><td>' + esc(a['Perihal']) + '</td><td>' + fmtDate(a['Tanggal']) +
-        '</td><td>' + esc(a['Kategori']) + '</td>' +
-        '<td>' + fileCell(a['Link File']) + '</td>' +
-        '<td><button class="btn-danger" onclick="hapusArsip(\'' + esc(a['ID']) + '\')">Hapus</button></td></tr>';
-    });
+    const list = getFiltered('arsip').slice().reverse();
+    tbody.innerHTML = list.map((a, i) =>
+      '<tr><td class="c-no">' + (i + 1) + '</td><td>' + esc(a['Perihal']) +
+      '</td><td class="c-date">' + fmtDate(a['Tanggal']) + '</td><td>' + esc(a['Kategori']) + '</td>' +
+      '<td>' + fileCell(a['Link File']) + '</td>' +
+      '<td><button class="btn-danger" onclick="hapusArsip(\'' + esc(a['ID']) + '\')">Hapus</button></td></tr>'
+    ).join('') || emptyRow('arsip', 6, DB.arsip.length);
+    updateFilterUi('arsip', list.length, DB.arsip.length);
   }
 
   function submitArsip(e) {
@@ -1591,6 +2099,15 @@
     const dt = new Date(d);
     if (isNaN(dt)) return d;
     return dt.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+  }
+
+  function fmtDateLong(d) {
+    if (!d) return '-';
+    let dt;
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(d));
+    dt = m ? new Date(+m[1], +m[2] - 1, +m[3]) : new Date(d);
+    if (isNaN(dt)) return String(d);
+    return dt.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
   }
 
   // ============ INISIALISASI ============
