@@ -243,6 +243,29 @@
 
   .btn-link-inline { background: none; border: none; color: var(--hijau-tua); text-decoration: underline; cursor: pointer; font-size: 13px; padding: 0; }
 
+  /* ===== TOMBOL KECIL ===== */
+  .btn-sm { padding: 6px 12px; font-size: 12px; border-radius: 8px; }
+
+  /* ===== KOLOM PASSWORD + IKON MATA ===== */
+  .pw-wrap { position: relative; display: flex; align-items: center; }
+  .form-row .pw-wrap input { width: 100%; padding-right: 46px; }
+  .pw-toggle {
+    position: absolute; right: 4px; top: 50%; transform: translateY(-50%);
+    display: flex; align-items: center; justify-content: center;
+    background: none; border: none; cursor: pointer; padding: 7px; border-radius: 8px;
+    color: var(--teks-lembut);
+  }
+  .pw-toggle:hover { color: var(--hijau-tua); background: var(--hijau-muda); }
+  .pw-toggle svg { width: 20px; height: 20px; display: block; }
+
+  /* ===== KOTAK DIALOG LIHAT FILE ===== */
+  .modal-box.modal-viewer { max-width: 980px; height: 90vh; display: flex; flex-direction: column; padding: 16px; overflow: hidden; }
+  .viewer-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .viewer-head h3 { margin: 0; color: var(--hijau-tua); }
+  #viewerFrame { flex: 1; width: 100%; border: 1px solid var(--border); border-radius: 10px; background: var(--abu); }
+  .viewer-foot { text-align: center; font-size: 12px; margin-top: 8px; color: var(--teks-lembut); }
+  .viewer-foot a { color: var(--hijau-tua); }
+
   /* ===== BOTTOM NAVIGATION (mobile) ===== */
   .bottom-nav {
     display: none;
@@ -364,7 +387,7 @@
           <div class="form-row"><label>Password</label><input type="password" id="loginPassword" required autocomplete="current-password"></div>
           <div class="modal-actions" style="justify-content:space-between">
             <button type="button" class="btn-secondary" onclick="closeModal('loginBox')">Batal</button>
-            <button type="submit" class="btn-primary">Masuk</button>
+            <button type="submit" class="btn-primary" id="btnLogin">Masuk</button>
           </div>
        </form>
      </div>
@@ -395,8 +418,11 @@
     <button class="nav-btn" data-page="arsip">🗄️ Arsip</button>
     <button class="nav-btn" data-page="permintaan-surat">📝 Permintaan Surat</button>
     <button class="nav-btn" data-page="buku-induk">📒 Buku Induk Pegawai</button>
-    <button class="nav-btn" data-page="setting">⚙️ Setting</button>
-    <button class="nav-btn" style="margin-left:auto;color:#b02a2a" onclick="logoutAdmin()">🚪 Keluar</button>
+    <button class="nav-btn admin-only" data-page="pengguna">👥 Pengguna</button>
+    <button class="nav-btn admin-only" data-page="setting">⚙️ Setting</button>
+    <button class="nav-btn" id="btnRefresh" style="margin-left:auto" onclick="muatUlangData()" title="Ambil ulang data terbaru dari server">🔄 Segarkan</button>
+    <button class="nav-btn" id="navUserName" onclick="bukaAkunSaya()" title="Akun Saya">👤 Akun</button>
+    <button class="nav-btn" style="color:#b02a2a" onclick="logoutAdmin()">🚪 Keluar</button>
   </nav>
 
   <!-- ===== KONTEN ===== -->
@@ -442,7 +468,7 @@
       <table class="data-table">
         <thead><tr>
           <th>No Surat</th><th>Tgl Surat</th><th>Tgl Terima</th><th>Asal</th>
-          <th>Perihal</th><th>Status</th><th>File</th><th>Aksi</th>
+          <th>Perihal</th><th>File</th><th>Aksi</th>
         </tr></thead>
         <tbody id="tblSuratMasuk"></tbody>
       </table>
@@ -539,13 +565,21 @@
       </form>
       <p id="stResult"></p>
 
-      <h2 style="margin-top:32px">Ganti Login Portal Admin</h2>
-      <form id="formAdminAuth" class="form-box" onsubmit="return submitAdminAuth(event)">
-        <div class="form-row"><label>Username Baru</label><input type="text" id="stAdminUsername" placeholder="Kosongkan jika tidak diubah"></div>
-        <div class="form-row"><label>Password Baru</label><input type="password" id="stAdminPassword" placeholder="Kosongkan jika tidak diubah"></div>
-        <button type="submit" class="btn-primary">Simpan Login</button>
-      </form>
-      <p id="stAuthResult"></p>
+    </section>
+
+    <!-- PENGGUNA (khusus Admin) -->
+    <section id="page-pengguna" class="page">
+      <div class="page-head">
+        <h2>Pengguna</h2>
+        <button class="btn-primary" onclick="bukaFormUser()">+ Tambah Pengguna</button>
+      </div>
+      <p class="form-hint" style="margin-bottom:14px"><b>Admin</b> dapat mengelola semua menu termasuk Pengguna dan Setting. <b>Petugas</b> dapat mengelola surat masuk/keluar, arsip, permintaan surat, dan buku induk pegawai.</p>
+      <div class="table-wrap">
+      <table class="data-table">
+        <thead><tr><th>Nama Lengkap</th><th>Username</th><th>Role</th><th>Status</th><th>Aksi</th></tr></thead>
+        <tbody id="tblUsers"></tbody>
+      </table>
+      </div>
     </section>
 
   </main>
@@ -574,7 +608,10 @@
       <div class="more-list">
         <button class="more-item" onclick="showPage('permintaan-surat')"><span class="icon">📝</span>Permintaan Surat</button>
         <button class="more-item" onclick="showPage('buku-induk')"><span class="icon">📒</span>Buku Induk Pegawai</button>
-        <button class="more-item" onclick="showPage('setting')"><span class="icon">⚙️</span>Pengaturan</button>
+        <button class="more-item admin-only" onclick="showPage('pengguna')"><span class="icon">👥</span>Pengguna</button>
+        <button class="more-item admin-only" onclick="showPage('setting')"><span class="icon">⚙️</span>Pengaturan</button>
+        <button class="more-item" onclick="closeModal('moreSheet');muatUlangData()"><span class="icon">🔄</span>Segarkan Data</button>
+        <button class="more-item" onclick="bukaAkunSaya()"><span class="icon">👤</span>Akun Saya</button>
         <button class="more-item danger" onclick="closeModal('moreSheet');logoutAdmin()"><span class="icon">🚪</span>Keluar</button>
       </div>
       <div class="modal-actions">
@@ -663,6 +700,73 @@
     </div>
   </div>
 
+  <!-- ===== DIALOG LIHAT FILE (pratinjau di dalam halaman) ===== -->
+  <div id="modalViewer" class="modal">
+    <div class="modal-box modal-viewer">
+      <div class="viewer-head">
+        <h3>Lihat File</h3>
+        <button type="button" class="btn-secondary btn-sm" onclick="closeModal('modalViewer')">Tutup ✕</button>
+      </div>
+      <iframe id="viewerFrame" title="Pratinjau file" src="about:blank"></iframe>
+      <div class="viewer-foot">File tidak tampil? <a id="viewerNewTab" href="#" target="_blank" rel="noopener">Buka langsung</a></div>
+    </div>
+  </div>
+
+  <!-- ===== DIALOG UPLOAD FILE (untuk surat yang belum ada filenya) ===== -->
+  <div id="modalUploadFile" class="modal">
+    <div class="modal-box">
+      <h3>Upload File Surat</h3>
+      <form onsubmit="return submitUploadFile(event)">
+        <input type="hidden" id="ufJenis">
+        <input type="hidden" id="ufId">
+        <p class="form-hint" id="ufInfo" style="margin:0 0 14px"></p>
+        <div class="form-row"><label>Pilih File</label><input type="file" id="ufFile" required></div>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" onclick="closeModal('modalUploadFile')">Batal</button>
+          <button type="submit" class="btn-primary" id="btnUploadFile">Upload</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== DIALOG PENGGUNA (tambah / edit, khusus Admin) ===== -->
+  <div id="modalUser" class="modal">
+    <div class="modal-box">
+      <h3 id="usJudul">Tambah Pengguna</h3>
+      <form id="formUser" onsubmit="return submitUser(event)" autocomplete="off">
+        <input type="hidden" id="usId">
+        <div class="form-row"><label>Nama Lengkap</label><input type="text" id="usNama" required></div>
+        <div class="form-row"><label>Username</label><input type="text" id="usUsername" required autocomplete="off" autocapitalize="none" placeholder="huruf/angka, min. 3 karakter"></div>
+        <div class="form-row"><label>Password</label><input type="password" id="usPassword" minlength="6" autocomplete="new-password"><span class="form-hint" id="usPwHint"></span></div>
+        <div class="form-row"><label>Role</label><select id="usRole"><option value="Petugas">Petugas</option><option value="Admin">Admin</option></select></div>
+        <div class="form-row"><label>Status</label><select id="usStatus"><option value="Aktif">Aktif</option><option value="Nonaktif">Nonaktif</option></select></div>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" onclick="closeModal('modalUser')">Batal</button>
+          <button type="submit" class="btn-primary" id="btnSimpanUser">Simpan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== DIALOG AKUN SAYA (ganti nama / password sendiri) ===== -->
+  <div id="modalAkun" class="modal">
+    <div class="modal-box">
+      <h3>Akun Saya</h3>
+      <form id="formAkun" onsubmit="return submitAkun(event)">
+        <p class="form-hint" id="akInfo" style="margin:0 0 14px"></p>
+        <div id="akError" class="alert-error hidden"></div>
+        <div class="form-row"><label>Nama Lengkap</label><input type="text" id="akNama" required></div>
+        <div class="form-row"><label>Password Lama</label><input type="password" id="akPwLama" autocomplete="current-password"><span class="form-hint">Hanya diisi jika ingin mengganti password.</span></div>
+        <div class="form-row"><label>Password Baru</label><input type="password" id="akPwBaru" minlength="6" autocomplete="new-password" placeholder="Kosongkan jika tidak diubah"></div>
+        <div class="form-row"><label>Konfirmasi Password Baru</label><input type="password" id="akPwKonfirmasi" autocomplete="new-password"></div>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" onclick="closeModal('modalAkun')">Batal</button>
+          <button type="submit" class="btn-primary" id="btnSimpanAkun">Simpan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <script>
   // ============ KONFIGURASI (ubah di sini) ============
   const CONFIG = {
@@ -673,7 +777,8 @@
   };
 
   // ============ API (pengganti google.script.run) ============
-  let authToken = ''; // token sesi admin (disimpan di memori, hilang saat halaman di-refresh)
+  let authToken = '';    // token sesi (disimpan di memori, hilang saat halaman di-refresh)
+  let currentUser = null; // {ID, Username, 'Nama Lengkap', Role, Status}
 
   async function api(action, ...args) {
     if (!CONFIG.API_URL || CONFIG.API_URL.indexOf('GANTI_DENGAN') === 0) {
@@ -722,6 +827,52 @@
     }
   }
 
+  // ============ DATA (dimuat sekali saat login, lalu dipakai dari memori) ============
+  const DB = { suratMasuk: [], suratKeluar: [], arsip: [], pegawai: [], permintaan: [], users: [], settings: {} };
+
+  // Untuk memuat ulang satu kelompok data setelah tambah / ubah / hapus.
+  const COLLECTIONS = {
+    suratMasuk:  { action: 'getSuratMasuk',      render: () => renderSuratMasuk() },
+    suratKeluar: { action: 'getSuratKeluar',     render: () => renderSuratKeluar() },
+    arsip:       { action: 'getArsip',           render: () => renderArsip() },
+    pegawai:     { action: 'getPegawai',         render: () => renderPegawai() },
+    permintaan:  { action: 'getPermintaanSurat', render: () => renderPermintaan() },
+    users:       { action: 'getUsers',           render: () => renderUsers() },
+    settings:    { action: 'getSettings',        render: () => renderSettingForm() }
+  };
+
+  function applyAllData(d) {
+    d = d || {};
+    Object.keys(DB).forEach(k => { DB[k] = d[k] || (k === 'settings' ? {} : []); });
+    renderAll();
+  }
+
+  function renderAll() {
+    renderDashboard(); renderSuratMasuk(); renderSuratKeluar(); renderArsip();
+    renderPermintaan(); renderPegawai(); renderSettingForm(); renderUsers();
+  }
+
+  function reloadData(key) {
+    const c = COLLECTIONS[key];
+    return api(c.action).then(data => { DB[key] = data; c.render(); renderDashboard(); });
+  }
+
+  // Tombol "Segarkan": ambil ulang semua data (mis. untuk melihat perubahan pengguna lain).
+  function muatUlangData() {
+    const btn = document.getElementById('btnRefresh');
+    btn.disabled = true; btn.textContent = '⏳ Memuat...';
+    api('getAllData').then(applyAllData).catch(apiError)
+      .finally(() => { btn.disabled = false; btn.textContent = '🔄 Segarkan'; });
+  }
+
+  function isAdmin() { return !!currentUser && currentUser['Role'] === 'Admin'; }
+
+  // Tampilkan nama pengguna & sembunyikan menu khusus Admin bagi Petugas
+  function applyUser() {
+    document.getElementById('navUserName').textContent = '👤 ' + (currentUser['Nama Lengkap'] || currentUser['Username']);
+    document.querySelectorAll('.admin-only').forEach(el => el.classList.toggle('hidden', !isAdmin()));
+  }
+
   // ============ NAVIGASI (Portal Admin: nav atas desktop + bottom nav HP) ============
   document.querySelectorAll('.nav-btn[data-page], .bottom-nav-btn[data-page]').forEach(btn => {
     btn.addEventListener('click', () => showPage(btn.dataset.page));
@@ -731,6 +882,9 @@
   let pageStack = ['dashboard'];
 
   function showPage(name, isBack) {
+    // Menu khusus Admin tidak bisa dibuka Petugas
+    if ((name === 'setting' || name === 'pengguna') && !isAdmin()) name = 'dashboard';
+
     if (!isBack) {
       if (name === 'dashboard') pageStack = ['dashboard'];
       else {
@@ -754,14 +908,7 @@
     else document.getElementById('bottomNavMore').classList.add('active'); // halaman dibuka lewat menu "Lainnya"
 
     closeModal('moreSheet');
-
-    if (name === 'dashboard') loadDashboard();
-    if (name === 'surat-masuk') loadSuratMasuk();
-    if (name === 'surat-keluar') loadSuratKeluar();
-    if (name === 'arsip') loadArsip();
-    if (name === 'permintaan-surat') loadPermintaan();
-    if (name === 'buku-induk') loadPegawai();
-    if (name === 'setting') loadSetting();
+    // Data sudah dimuat saat login, jadi tidak ada pemanggilan server di sini.
   }
 
   // ============ LANDING / LOGIN PORTAL ADMIN ============
@@ -770,39 +917,50 @@
     const username = val('loginUsername');
     const password = val('loginPassword');
     const errBox = document.getElementById('loginError');
+    const btn = document.getElementById('btnLogin');
     errBox.classList.add('hidden');
+    btn.disabled = true; btn.textContent = 'Memuat data...';
 
     api('login', username, password)
-      .then(token => {
-        const ok = !!token;
-        if (ok) {
-          authToken = token;
+      .then(res => {
+        if (!res || !res.token) {
+          errBox.textContent = 'Username atau password salah.';
+          errBox.classList.remove('hidden');
+          return;
+        }
+        authToken = res.token;
+        currentUser = res.user;
+        // Muat SEMUA data sekali di awal, supaya pindah menu tidak perlu menunggu server.
+        return api('getAllData').then(data => {
+          applyAllData(data);
+          applyUser();
           closeModal('loginBox');
           document.getElementById('landingView').classList.add('hidden');
           document.getElementById('adminView').classList.remove('hidden');
           document.getElementById('formLogin').reset();
           pageStack = ['dashboard'];
           showPage('dashboard');
-        } else {
-          errBox.textContent = 'Username atau password salah.';
-          errBox.classList.remove('hidden');
-        }
+        });
       })
       .catch(err => {
+        authToken = ''; currentUser = null;
         errBox.textContent = 'Gagal login: ' + err.message;
         errBox.classList.remove('hidden');
-      });
+      })
+      .finally(() => { btn.disabled = false; btn.textContent = 'Masuk'; });
     return false;
   }
 
   function logoutAdmin() {
     const t = authToken;
     authToken = '';
+    currentUser = null;
+    Object.keys(DB).forEach(k => { DB[k] = (k === 'settings' ? {} : []); });
     if (t) fetch(CONFIG.API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify({ action: 'logout', token: t }) }).catch(() => {});
     document.getElementById('adminView').classList.add('hidden');
     document.getElementById('landingView').classList.remove('hidden');
-    closeModal('loginBox');
+    modalStack.slice().forEach(closeModal);
     pageStack = ['dashboard'];
   }
 
@@ -847,8 +1005,6 @@
     return false;
   }
 
-
-
   // ============ MODAL ============
   const modalStack = []; // modal yang sedang terbuka (urutan buka)
   function openModal(id) {
@@ -856,9 +1012,49 @@
     if (!modalStack.includes(id)) modalStack.push(id);
   }
   function closeModal(id) {
-    document.getElementById(id).classList.remove('open');
+    const el = document.getElementById(id);
+    el.classList.remove('open');
     const i = modalStack.indexOf(id);
     if (i >= 0) modalStack.splice(i, 1);
+    resetPasswordToggles(el);
+    if (id === 'modalViewer') document.getElementById('viewerFrame').src = 'about:blank'; // hentikan pemuatan file
+  }
+
+  // ============ IKON MATA PADA KOLOM PASSWORD ============
+  const EYE_ON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+  const EYE_OFF = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
+
+  // Membungkus SETIAP <input type="password"> dengan tombol ikon mata (tampilkan / sembunyikan).
+  function initPasswordToggles() {
+    document.querySelectorAll('input[type="password"]').forEach(inp => {
+      if (inp.dataset.pw) return;
+      inp.dataset.pw = '1';
+      const wrap = document.createElement('div');
+      wrap.className = 'pw-wrap';
+      inp.parentNode.insertBefore(wrap, inp);
+      wrap.appendChild(inp);
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'pw-toggle';
+      btn.setAttribute('aria-label', 'Tampilkan password');
+      btn.innerHTML = EYE_ON;
+      btn.addEventListener('click', () => {
+        const show = inp.type === 'password';
+        inp.type = show ? 'text' : 'password';
+        btn.innerHTML = show ? EYE_OFF : EYE_ON;
+        btn.setAttribute('aria-label', show ? 'Sembunyikan password' : 'Tampilkan password');
+      });
+      wrap.appendChild(btn);
+    });
+  }
+
+  // Saat dialog ditutup, kembalikan semua kolom password menjadi tersembunyi.
+  function resetPasswordToggles(root) {
+    (root || document).querySelectorAll('input[data-pw]').forEach(inp => {
+      inp.type = 'password';
+      const btn = inp.parentNode.querySelector('.pw-toggle');
+      if (btn) { btn.innerHTML = EYE_ON; btn.setAttribute('aria-label', 'Tampilkan password'); }
+    });
   }
 
   // ============ TOMBOL BACK (HP / browser) ============
@@ -918,52 +1114,122 @@
     }
   }
 
-  // ============ DASHBOARD ============
-  function loadDashboard() {
-    api('getDashboardStats').then(stats => {
-      document.getElementById('statMasuk').textContent = stats.totalMasuk;
-      document.getElementById('statKeluar').textContent = stats.totalKeluar;
-      document.getElementById('statArsip').textContent = stats.totalArsip;
-      document.getElementById('statMasukBulanIni').textContent = stats.masukBulanIni;
-      document.getElementById('statKeluarBulanIni').textContent = stats.keluarBulanIni;
+  // ============ LIHAT FILE DI KOTAK DIALOG ============
+  // Link Drive diubah ke bentuk "preview" agar bisa ditampilkan di dalam <iframe>.
+  function toPreviewUrl(url) {
+    url = String(url || '');
+    let m = url.match(/docs\.google\.com\/(document|spreadsheets|presentation)\/d\/([a-zA-Z0-9_-]+)/);
+    if (m) return 'https://docs.google.com/' + m[1] + '/d/' + m[2] + '/preview';
+    m = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+    if (m && /(drive\.google\.com|googleusercontent\.com)/.test(url)) {
+      return 'https://drive.google.com/file/d/' + m[1] + '/preview';
+    }
+    return url;
+  }
 
-      document.getElementById('statPermintaan').textContent = stats.totalPermintaan;
-      document.getElementById('statPegawai').textContent = stats.totalPegawai || 0;
-      document.getElementById('statPermintaanBulanIni').textContent = stats.permintaanBulanIni;
+  function lihatFile(url) {
+    if (!/^https?:\/\//i.test(String(url || ''))) return;
+    document.getElementById('viewerFrame').src = toPreviewUrl(url);
+    document.getElementById('viewerNewTab').href = url;
+    openModal('modalViewer');
+  }
 
-      const tbody = document.getElementById('tblSuratTerbaru');
-      tbody.innerHTML = '';
-      stats.suratTerbaru.forEach(s => {
-        tbody.innerHTML += '<tr><td>' + esc(s['No Surat']) + '</td><td>' + esc(s['Asal Surat']) +
-          '</td><td>' + esc(s['Perihal']) + '</td><td>' + fmtDate(s['Tanggal Terima']) + '</td></tr>';
-      });
+  // Semua tombol/link bertanda data-file membuka dialog pratinjau (bukan tab baru).
+  document.addEventListener('click', function (e) {
+    const el = e.target.closest('[data-file]');
+    if (!el) return;
+    e.preventDefault();
+    lihatFile(el.getAttribute('data-file'));
+  });
 
-      const tbodyPg = document.getElementById('tblPermintaanTerbaru');
-      tbodyPg.innerHTML = '';
-      stats.permintaanTerbaru.forEach(p => {
-        tbodyPg.innerHTML += '<tr><td>' + esc(p['Jenis Surat']) + '</td><td>' + esc(p['Nama Pemohon']) +
-          '</td><td>' + esc(p['No WA']) + '</td><td>' + fmtDate(p['Tanggal Pengajuan']) +
-          '</td><td>' + statusBadge(p['Status']) + '</td></tr>';
-      });
-      if (!stats.permintaanTerbaru.length) tbodyPg.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#888">Belum ada permintaan surat.</td></tr>';
-    }).catch(apiError);
+  function fileCell(url) {
+    return url ? '<a href="#" class="link-btn" data-file="' + esc(url) + '">Lihat</a>' : '-';
+  }
+
+  // Untuk Surat Masuk / Keluar: bila belum ada file, tampilkan tombol Upload.
+  function fileCellUpload(url, jenis, id) {
+    if (url) return fileCell(url);
+    return '<button type="button" class="btn-secondary btn-sm" onclick="bukaUploadFile(\'' + jenis + '\',\'' + esc(id) + '\')">⬆ Upload</button>';
+  }
+
+  // ============ UPLOAD FILE UNTUK SURAT YANG BELUM ADA FILE-NYA ============
+  function bukaUploadFile(jenis, id) {
+    const list = jenis === 'masuk' ? DB.suratMasuk : DB.suratKeluar;
+    const s = list.find(x => x['ID'] === id);
+    if (!s) return;
+    document.getElementById('ufJenis').value = jenis;
+    document.getElementById('ufId').value = id;
+    document.getElementById('ufFile').value = '';
+    document.getElementById('ufInfo').textContent =
+      'Surat ' + jenis + ': ' + (s['No Surat'] || '-') + ' — ' + (s['Perihal'] || '-');
+    openModal('modalUploadFile');
+  }
+
+  function submitUploadFile(e) {
+    e.preventDefault();
+    const btn = document.getElementById('btnUploadFile');
+    const jenis = val('ufJenis'), id = val('ufId');
+    btn.disabled = true; btn.textContent = 'Mengupload...';
+    const selesai = () => { btn.disabled = false; btn.textContent = 'Upload'; };
+
+    uploadFileThen('ufFile', url => {
+      if (!url) { selesai(); return; } // gagal upload (pesan sudah ditampilkan)
+      api('setLinkFile', jenis, id, url)
+        .then(() => reloadData(jenis === 'masuk' ? 'suratMasuk' : 'suratKeluar'))
+        .then(() => { selesai(); closeModal('modalUploadFile'); })
+        .catch(err => { selesai(); apiError(err); });
+    });
+    return false;
+  }
+
+  // ============ DASHBOARD (dihitung dari data di memori) ============
+  function renderDashboard() {
+    const now = new Date(), bln = now.getMonth(), thn = now.getFullYear();
+    const bulanIni = (arr, f) => arr.filter(x => {
+      if (!x[f]) return false;
+      const d = new Date(x[f]);
+      return !isNaN(d) && d.getMonth() === bln && d.getFullYear() === thn;
+    }).length;
+
+    document.getElementById('statMasuk').textContent = DB.suratMasuk.length;
+    document.getElementById('statKeluar').textContent = DB.suratKeluar.length;
+    document.getElementById('statArsip').textContent = DB.arsip.length;
+    document.getElementById('statMasukBulanIni').textContent = bulanIni(DB.suratMasuk, 'Tanggal Terima');
+    document.getElementById('statKeluarBulanIni').textContent = bulanIni(DB.suratKeluar, 'Tanggal Kirim');
+    document.getElementById('statPermintaan').textContent = DB.permintaan.length;
+    document.getElementById('statPegawai').textContent = DB.pegawai.length;
+    document.getElementById('statPermintaanBulanIni').textContent = bulanIni(DB.permintaan, 'Tanggal Pengajuan');
+
+    const tbody = document.getElementById('tblSuratTerbaru');
+    tbody.innerHTML = '';
+    DB.suratMasuk.slice(-5).reverse().forEach(s => {
+      tbody.innerHTML += '<tr><td>' + esc(s['No Surat']) + '</td><td>' + esc(s['Asal Surat']) +
+        '</td><td>' + esc(s['Perihal']) + '</td><td>' + fmtDate(s['Tanggal Terima']) + '</td></tr>';
+    });
+
+    const tbodyPg = document.getElementById('tblPermintaanTerbaru');
+    tbodyPg.innerHTML = '';
+    const terbaru = DB.permintaan.slice(-5).reverse();
+    terbaru.forEach(p => {
+      tbodyPg.innerHTML += '<tr><td>' + esc(p['Jenis Surat']) + '</td><td>' + esc(p['Nama Pemohon']) +
+        '</td><td>' + esc(p['No WA']) + '</td><td>' + fmtDate(p['Tanggal Pengajuan']) +
+        '</td><td>' + statusBadge(p['Status']) + '</td></tr>';
+    });
+    if (!terbaru.length) tbodyPg.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#888">Belum ada permintaan surat.</td></tr>';
   }
 
   // ============ SURAT MASUK ============
-  function loadSuratMasuk() {
-    api('getSuratMasuk').then(data => {
-      const tbody = document.getElementById('tblSuratMasuk');
-      tbody.innerHTML = '';
-      data.slice().reverse().forEach(s => {
-        tbody.innerHTML +=
-          '<tr><td>' + esc(s['No Surat']) + '</td><td>' + fmtDate(s['Tanggal Surat']) +
-          '</td><td>' + fmtDate(s['Tanggal Terima']) + '</td><td>' + esc(s['Asal Surat']) +
-          '</td><td>' + esc(s['Perihal']) + '</td>' +
-          '<td>' + esc(s['Status']) + '</td>' +
-          '<td>' + (s['Link File'] ? '<a class="link-btn" href="' + s['Link File'] + '" target="_blank">Lihat</a>' : '-') + '</td>' +
-          '<td><button class="btn-danger" onclick="hapusSuratMasuk(\'' + s['ID'] + '\')">Hapus</button></td></tr>';
-      });
-    }).catch(apiError);
+  function renderSuratMasuk() {
+    const tbody = document.getElementById('tblSuratMasuk');
+    tbody.innerHTML = '';
+    DB.suratMasuk.slice().reverse().forEach(s => {
+      tbody.innerHTML +=
+        '<tr><td>' + esc(s['No Surat']) + '</td><td>' + fmtDate(s['Tanggal Surat']) +
+        '</td><td>' + fmtDate(s['Tanggal Terima']) + '</td><td>' + esc(s['Asal Surat']) +
+        '</td><td>' + esc(s['Perihal']) + '</td>' +
+        '<td>' + fileCellUpload(s['Link File'], 'masuk', s['ID']) + '</td>' +
+        '<td><button class="btn-danger" onclick="hapusSuratMasuk(\'' + esc(s['ID']) + '\')">Hapus</button></td></tr>';
+    });
   }
 
   function submitSuratMasuk(e) {
@@ -972,12 +1238,12 @@
       const data = {
         noSurat: val('smNoSurat'), tanggalSurat: val('smTglSurat'), tanggalTerima: val('smTglTerima'),
         asalSurat: val('smAsal'), perihal: val('smPerihal'),
-        linkFile: linkFile, status: 'Baru'
+        linkFile: linkFile
       };
       api('addSuratMasuk', data).then(() => {
         closeModal('modalSuratMasuk');
         e.target.reset();
-        loadSuratMasuk();
+        return reloadData('suratMasuk');
       }).catch(apiError);
     });
     return false;
@@ -985,22 +1251,20 @@
 
   function hapusSuratMasuk(id) {
     if (!confirm('Hapus surat ini?')) return;
-    api('deleteSuratMasuk', id).then(loadSuratMasuk).catch(apiError);
+    api('deleteSuratMasuk', id).then(() => reloadData('suratMasuk')).catch(apiError);
   }
 
   // ============ SURAT KELUAR ============
-  function loadSuratKeluar() {
-    api('getSuratKeluar').then(data => {
-      const tbody = document.getElementById('tblSuratKeluar');
-      tbody.innerHTML = '';
-      data.slice().reverse().forEach(s => {
-        tbody.innerHTML +=
-          '<tr><td>' + esc(s['No Surat']) + '</td><td>' + fmtDate(s['Tanggal Kirim']) +
-          '</td><td>' + esc(s['Tujuan Surat']) + '</td><td>' + esc(s['Perihal']) + '</td>' +
-          '<td>' + (s['Link File'] ? '<a class="link-btn" href="' + s['Link File'] + '" target="_blank">Lihat</a>' : '-') + '</td>' +
-          '<td><button class="btn-danger" onclick="hapusSuratKeluar(\'' + s['ID'] + '\')">Hapus</button></td></tr>';
-      });
-    }).catch(apiError);
+  function renderSuratKeluar() {
+    const tbody = document.getElementById('tblSuratKeluar');
+    tbody.innerHTML = '';
+    DB.suratKeluar.slice().reverse().forEach(s => {
+      tbody.innerHTML +=
+        '<tr><td>' + esc(s['No Surat']) + '</td><td>' + fmtDate(s['Tanggal Kirim']) +
+        '</td><td>' + esc(s['Tujuan Surat']) + '</td><td>' + esc(s['Perihal']) + '</td>' +
+        '<td>' + fileCellUpload(s['Link File'], 'keluar', s['ID']) + '</td>' +
+        '<td><button class="btn-danger" onclick="hapusSuratKeluar(\'' + esc(s['ID']) + '\')">Hapus</button></td></tr>';
+    });
   }
 
   function submitSuratKeluar(e) {
@@ -1013,7 +1277,7 @@
       api('addSuratKeluar', data).then(() => {
         closeModal('modalSuratKeluar');
         e.target.reset();
-        loadSuratKeluar();
+        return reloadData('suratKeluar');
       }).catch(apiError);
     });
     return false;
@@ -1021,22 +1285,20 @@
 
   function hapusSuratKeluar(id) {
     if (!confirm('Hapus surat ini?')) return;
-    api('deleteSuratKeluar', id).then(loadSuratKeluar).catch(apiError);
+    api('deleteSuratKeluar', id).then(() => reloadData('suratKeluar')).catch(apiError);
   }
 
   // ============ ARSIP ============
-  function loadArsip() {
-    api('getArsip').then(data => {
-      const tbody = document.getElementById('tblArsip');
-      tbody.innerHTML = '';
-      data.slice().reverse().forEach(a => {
-        tbody.innerHTML +=
-          '<tr><td>' + esc(a['Perihal']) + '</td><td>' + fmtDate(a['Tanggal']) +
-          '</td><td>' + esc(a['Kategori']) + '</td>' +
-          '<td>' + (a['Link File'] ? '<a class="link-btn" href="' + a['Link File'] + '" target="_blank">Lihat</a>' : '-') + '</td>' +
-          '<td><button class="btn-danger" onclick="hapusArsip(\'' + a['ID'] + '\')">Hapus</button></td></tr>';
-      });
-    }).catch(apiError);
+  function renderArsip() {
+    const tbody = document.getElementById('tblArsip');
+    tbody.innerHTML = '';
+    DB.arsip.slice().reverse().forEach(a => {
+      tbody.innerHTML +=
+        '<tr><td>' + esc(a['Perihal']) + '</td><td>' + fmtDate(a['Tanggal']) +
+        '</td><td>' + esc(a['Kategori']) + '</td>' +
+        '<td>' + fileCell(a['Link File']) + '</td>' +
+        '<td><button class="btn-danger" onclick="hapusArsip(\'' + esc(a['ID']) + '\')">Hapus</button></td></tr>';
+    });
   }
 
   function submitArsip(e) {
@@ -1049,7 +1311,7 @@
       api('addArsip', data).then(() => {
         closeModal('modalArsip');
         e.target.reset();
-        loadArsip();
+        return reloadData('arsip');
       }).catch(apiError);
     });
     return false;
@@ -1057,20 +1319,14 @@
 
   function hapusArsip(id) {
     if (!confirm('Hapus arsip ini?')) return;
-    api('deleteArsip', id).then(loadArsip).catch(apiError);
+    api('deleteArsip', id).then(() => reloadData('arsip')).catch(apiError);
   }
 
   // ============ BUKU INDUK PEGAWAI ============
-  let pegawaiData = [];
-
-  function loadPegawai() {
-    api('getPegawai').then(data => { pegawaiData = data; renderPegawai(); }).catch(apiError);
-  }
-
   function renderPegawai() {
     const q = val('bpCari').trim().toLowerCase();
     const tbody = document.getElementById('tblPegawai');
-    const list = pegawaiData.slice()
+    const list = DB.pegawai.slice()
       .sort((a, b) => String(a['Nama Lengkap']).localeCompare(String(b['Nama Lengkap']), 'id'))
       .filter(p => !q || [p['Nama Lengkap'], p['NIP / NUPTK'], p['Jabatan']]
         .some(v => String(v || '').toLowerCase().includes(q)));
@@ -1082,9 +1338,9 @@
         '<tr><td>' + esc(p['Nama Lengkap']) + '</td><td>' + esc(p['NIP / NUPTK']) + '</td><td>' + esc(ttl || '-') +
         '</td><td>' + esc(p['Jabatan']) + '</td><td>' + esc(p['Status Kepegawaian']) + '</td><td>' + esc(p['No HP']) +
         '</td><td><span class="badge" style="background:' + (aktif ? 'var(--hijau)' : '#888') + '">' + (aktif ? 'Aktif' : 'Nonaktif') + '</span></td>' +
-        '<td>' + (p['Link File'] ? '<a class="link-btn" href="' + esc(p['Link File']) + '" target="_blank">Lihat</a>' : '-') + '</td>' +
-        '<td style="white-space:nowrap"><button class="btn-secondary" style="padding:6px 12px;font-size:12px" onclick="bukaFormPegawai(\'' + p['ID'] + '\')">Edit</button> ' +
-        '<button class="btn-danger" onclick="hapusPegawai(\'' + p['ID'] + '\')">Hapus</button></td></tr>';
+        '<td>' + fileCell(p['Link File']) + '</td>' +
+        '<td style="white-space:nowrap"><button class="btn-secondary btn-sm" onclick="bukaFormPegawai(\'' + esc(p['ID']) + '\')">Edit</button> ' +
+        '<button class="btn-danger" onclick="hapusPegawai(\'' + esc(p['ID']) + '\')">Hapus</button></td></tr>';
     });
     if (!list.length) tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:#888">' +
       (q ? 'Tidak ada pegawai yang cocok.' : 'Belum ada data pegawai.') + '</td></tr>';
@@ -1100,7 +1356,7 @@
 
   function bukaFormPegawai(id) {
     document.getElementById('formPegawai').reset();
-    const p = id ? pegawaiData.find(x => x['ID'] === id) : null;
+    const p = id ? DB.pegawai.find(x => x['ID'] === id) : null;
     document.getElementById('bpJudul').textContent = p ? 'Edit Pegawai' : 'Tambah Pegawai';
     document.getElementById('bpId').value = p ? p['ID'] : '';
     document.getElementById('bpLinkLama').value = p ? (p['Link File'] || '') : '';
@@ -1138,7 +1394,7 @@
       };
       const id = val('bpId');
       (id ? api('updatePegawai', id, data) : api('addPegawai', data))
-        .then(() => { selesai(); closeModal('modalPegawai'); loadPegawai(); })
+        .then(() => { selesai(); closeModal('modalPegawai'); return reloadData('pegawai'); })
         .catch(err => { selesai(); alert('Gagal menyimpan: ' + err.message); });
     });
     return false;
@@ -1146,7 +1402,7 @@
 
   function hapusPegawai(id) {
     if (!confirm('Hapus data pegawai ini?')) return;
-    api('deletePegawai', id).then(loadPegawai).catch(apiError);
+    api('deletePegawai', id).then(() => reloadData('pegawai')).catch(apiError);
   }
 
   // ============ PERMINTAAN SURAT (Portal Admin) ============
@@ -1156,47 +1412,44 @@
     return '<span class="status-badge ' + cls + '">' + esc(s) + '</span>';
   }
 
-  function loadPermintaan() {
-    api('getPermintaanSurat').then(data => {
-      const tbody = document.getElementById('tblPermintaan');
-      tbody.innerHTML = '';
-      data.slice().reverse().forEach(p => {
-        const statusOptions = ['Baru', 'Diproses', 'Selesai', 'Ditolak']
-          .map(s => '<option value="' + s + '"' + (p['Status'] === s ? ' selected' : '') + '>' + s + '</option>').join('');
-        tbody.innerHTML +=
-          '<tr><td>' + fmtDate(p['Tanggal Pengajuan']) + '</td><td>' + esc(p['Jenis Surat']) +
-          '</td><td>' + esc(p['Nama Pemohon']) + '</td><td>' + esc(p['Keperluan']) +
-          '</td><td>' + esc(p['No WA']) + '</td>' +
-          '<td>' + (p['Link File'] ? '<a class="link-btn" href="' + p['Link File'] + '" target="_blank">Lihat</a>' : '-') + '</td>' +
-          '<td><select onchange="ubahStatusPermintaan(\'' + p['ID'] + '\', this.value)">' + statusOptions + '</select></td>' +
-          '<td><button class="btn-danger" onclick="hapusPermintaan(\'' + p['ID'] + '\')">Hapus</button></td></tr>';
-      });
-      if (!data.length) tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#888">Belum ada permintaan surat.</td></tr>';
-    }).catch(apiError);
+  function renderPermintaan() {
+    const tbody = document.getElementById('tblPermintaan');
+    tbody.innerHTML = '';
+    DB.permintaan.slice().reverse().forEach(p => {
+      const statusOptions = ['Baru', 'Diproses', 'Selesai', 'Ditolak']
+        .map(s => '<option value="' + s + '"' + (p['Status'] === s ? ' selected' : '') + '>' + s + '</option>').join('');
+      tbody.innerHTML +=
+        '<tr><td>' + fmtDate(p['Tanggal Pengajuan']) + '</td><td>' + esc(p['Jenis Surat']) +
+        '</td><td>' + esc(p['Nama Pemohon']) + '</td><td>' + esc(p['Keperluan']) +
+        '</td><td>' + esc(p['No WA']) + '</td>' +
+        '<td>' + fileCell(p['Link File']) + '</td>' +
+        '<td><select onchange="ubahStatusPermintaan(\'' + esc(p['ID']) + '\', this.value)">' + statusOptions + '</select></td>' +
+        '<td><button class="btn-danger" onclick="hapusPermintaan(\'' + esc(p['ID']) + '\')">Hapus</button></td></tr>';
+    });
+    if (!DB.permintaan.length) tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#888">Belum ada permintaan surat.</td></tr>';
   }
 
   function ubahStatusPermintaan(id, status) {
-    api('updateStatusPermintaan', id, status).then(loadPermintaan).catch(apiError);
+    api('updateStatusPermintaan', id, status).then(() => reloadData('permintaan')).catch(apiError);
   }
 
   function hapusPermintaan(id) {
     if (!confirm('Hapus permintaan surat ini?')) return;
-    api('deletePermintaanSurat', id).then(loadPermintaan).catch(apiError);
+    api('deletePermintaanSurat', id).then(() => reloadData('permintaan')).catch(apiError);
   }
 
-  // ============ SETTING ============
-  function loadSetting() {
-    api('getSettings').then(s => {
-      document.getElementById('stNamaSekolah').value = s.NamaSekolah || '';
+  // ============ SETTING (khusus Admin) ============
+  function renderSettingForm() {
+    const s = DB.settings || {};
+    document.getElementById('stNamaSekolah').value = s.NamaSekolah || '';
 
-      const logoPrev = document.getElementById('stLogoPreview');
-      if (s.LogoUrl) { logoPrev.src = s.LogoUrl; logoPrev.style.display = 'block'; }
-      else { logoPrev.style.display = 'none'; }
+    const logoPrev = document.getElementById('stLogoPreview');
+    if (s.LogoUrl) { logoPrev.src = s.LogoUrl; logoPrev.style.display = 'block'; }
+    else { logoPrev.style.display = 'none'; }
 
-      const kopPrev = document.getElementById('stKopPreview');
-      if (s.KopSuratUrl) { kopPrev.src = s.KopSuratUrl; kopPrev.style.display = 'block'; }
-      else { kopPrev.style.display = 'none'; }
-    }).catch(apiError);
+    const kopPrev = document.getElementById('stKopPreview');
+    if (s.KopSuratUrl) { kopPrev.src = s.KopSuratUrl; kopPrev.style.display = 'block'; }
+    else { kopPrev.style.display = 'none'; }
   }
 
   function submitSetting(e) {
@@ -1206,7 +1459,9 @@
     const saveTextSettings = () => {
       api('saveSettings', data).then(() => {
         document.getElementById('stResult').textContent = 'Pengaturan tersimpan.';
-        loadSetting();
+        document.getElementById('stLogoFile').value = '';
+        document.getElementById('stKopFile').value = '';
+        return reloadData('settings');
       }).catch(apiError);
     };
 
@@ -1233,18 +1488,98 @@
     return false;
   }
 
-  function submitAdminAuth(e) {
+  // ============ PENGGUNA / MULTIUSER (khusus Admin) ============
+  function renderUsers() {
+    const tbody = document.getElementById('tblUsers');
+    tbody.innerHTML = '';
+    DB.users.forEach(u => {
+      const aktif = u['Status'] !== 'Nonaktif';
+      const saya = !!currentUser && u['ID'] === currentUser['ID'];
+      tbody.innerHTML +=
+        '<tr><td>' + esc(u['Nama Lengkap']) + (saya ? ' <span class="badge" style="background:#2b6cb0">Anda</span>' : '') +
+        '</td><td>' + esc(u['Username']) + '</td><td>' + esc(u['Role']) +
+        '</td><td><span class="badge" style="background:' + (aktif ? 'var(--hijau)' : '#888') + '">' + (aktif ? 'Aktif' : 'Nonaktif') + '</span></td>' +
+        '<td style="white-space:nowrap"><button class="btn-secondary btn-sm" onclick="bukaFormUser(\'' + esc(u['ID']) + '\')">Edit</button> ' +
+        (saya ? '' : '<button class="btn-danger" onclick="hapusUser(\'' + esc(u['ID']) + '\')">Hapus</button>') + '</td></tr>';
+    });
+    if (!DB.users.length) tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#888">Belum ada pengguna.</td></tr>';
+  }
+
+  function bukaFormUser(id) {
+    document.getElementById('formUser').reset();
+    const u = id ? DB.users.find(x => x['ID'] === id) : null;
+    document.getElementById('usJudul').textContent = u ? 'Edit Pengguna' : 'Tambah Pengguna';
+    document.getElementById('usId').value = u ? u['ID'] : '';
+    document.getElementById('usPassword').required = !u;
+    document.getElementById('usPwHint').textContent = u
+      ? 'Kosongkan jika password tidak ingin diubah.' : 'Minimal 6 karakter.';
+    if (u) {
+      document.getElementById('usNama').value = u['Nama Lengkap'] || '';
+      document.getElementById('usUsername').value = u['Username'] || '';
+      document.getElementById('usRole').value = u['Role'] || 'Petugas';
+      document.getElementById('usStatus').value = u['Status'] || 'Aktif';
+    }
+    openModal('modalUser');
+  }
+
+  function submitUser(e) {
     e.preventDefault();
-    const username = val('stAdminUsername').trim();
-    const password = val('stAdminPassword').trim();
-    if (!username && !password) {
-      document.getElementById('stAuthResult').textContent = 'Isi username dan/atau password baru terlebih dahulu.';
+    const btn = document.getElementById('btnSimpanUser');
+    btn.disabled = true; btn.textContent = 'Menyimpan...';
+    const selesai = () => { btn.disabled = false; btn.textContent = 'Simpan'; };
+    const data = {
+      nama: val('usNama').trim(), username: val('usUsername').trim(), password: val('usPassword'),
+      role: val('usRole'), status: val('usStatus')
+    };
+    const id = val('usId');
+    (id ? api('updateUser', id, data) : api('addUser', data))
+      .then(() => { selesai(); closeModal('modalUser'); return reloadData('users'); })
+      .catch(err => { selesai(); apiError(err); });
+    return false;
+  }
+
+  function hapusUser(id) {
+    if (!confirm('Hapus pengguna ini?')) return;
+    api('deleteUser', id).then(() => reloadData('users')).catch(apiError);
+  }
+
+  // ============ AKUN SAYA (semua pengguna) ============
+  function bukaAkunSaya() {
+    closeModal('moreSheet');
+    document.getElementById('formAkun').reset();
+    document.getElementById('akInfo').textContent =
+      'Username: ' + currentUser['Username'] + '  •  Role: ' + currentUser['Role'];
+    document.getElementById('akNama').value = currentUser['Nama Lengkap'] || '';
+    document.getElementById('akError').classList.add('hidden');
+    openModal('modalAkun');
+  }
+
+  function submitAkun(e) {
+    e.preventDefault();
+    const errBox = document.getElementById('akError');
+    errBox.classList.add('hidden');
+    const baru = val('akPwBaru'), konfirmasi = val('akPwKonfirmasi');
+    if (baru && baru !== konfirmasi) {
+      errBox.textContent = 'Konfirmasi password baru tidak sama.';
+      errBox.classList.remove('hidden');
       return false;
     }
-    api('updateAdminCredentials', username, password).then(() => {
-      document.getElementById('stAuthResult').textContent = 'Login admin berhasil diperbarui.';
-      document.getElementById('formAdminAuth').reset();
-    }).catch(apiError);
+    const btn = document.getElementById('btnSimpanAkun');
+    btn.disabled = true; btn.textContent = 'Menyimpan...';
+    api('updateMyAccount', val('akNama').trim(), val('akPwLama'), baru)
+      .then(res => {
+        if (res.token) authToken = res.token; // token baru setelah ganti password
+        currentUser['Nama Lengkap'] = res.nama;
+        applyUser();
+        closeModal('modalAkun');
+        return isAdmin() ? reloadData('users').catch(() => {}) : null;
+      })
+      .catch(err => {
+        if (err && err.handled) return;
+        errBox.textContent = err.message;
+        errBox.classList.remove('hidden');
+      })
+      .finally(() => { btn.disabled = false; btn.textContent = 'Simpan'; });
     return false;
   }
 
@@ -1259,6 +1594,7 @@
   }
 
   // ============ INISIALISASI ============
+  initPasswordToggles();
   applyPublicInfo({});
   api('getPublicInfo').then(applyPublicInfo).catch(err => console.warn('getPublicInfo gagal:', err.message));
   </script>
